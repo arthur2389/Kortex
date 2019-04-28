@@ -1,0 +1,42 @@
+from ProjectViewer.PVManager.PVManager import PVManager as PVManager
+import ProjectViewer.PVData.PVEnums as PVEnums
+
+date = "31/12/2012"
+time = "23:58"
+
+rootDir = "C:\\Users\\USER\\Documents\\arthur\\Project"
+files = [{"image": "C:\\Users\\USER\\Documents\\image1.jpg",
+          "desc": "Woman with boat an castle",
+          "theme": "C:\\Users\\USER\\Documents\\arthur\\Project\\Feature1",
+          "importance" : PVEnums.Importance.HIGH},
+         {"image": "C:\\Users\\USER\\Documents\\image2.jpg",
+          "desc": "Turtles an butterflies",
+          "theme": "C:\\Users\\USER\\Documents\\arthur\\Project\\Feature2",
+          "importance": PVEnums.Importance.LOW},
+         {"image": "C:\\Users\\USER\\Documents\\image3.jpg",
+          "desc": "Woman looking at a distante castle",
+          "theme": "C:\\Users\\USER\\Documents\\arthur\\Project\\Feature3",
+          "importance": PVEnums.Importance.LOW}]
+
+pvManager = PVManager(rootDir, "testProject")
+
+for i in range(3):
+    pvManager.AddPropertyToTheme(eventPath=files[i]["theme"],
+                                 property=PVEnums.EPropertyType.IMAGE,
+                                 picPath=files[i]["image"])
+    pvManager.AddPropertyToTheme(eventPath=files[i]["theme"],
+                                 property=PVEnums.EPropertyType.DESCRIPTION,
+                                 desc=files[i]["desc"])
+    pvManager.AddPropertyToTheme(eventPath=files[i]["theme"],
+                                 property=PVEnums.EPropertyType.IMPORTANCE,
+                                 importance=files[i]["importance"])
+    pvManager.AddPropertyToTheme(eventPath=files[i]["theme"],
+                                 property=PVEnums.EPropertyType.DATE_AND_TIME,
+                                 date=date,
+                                 time=time)
+
+
+pvManager.PrintProjectTree()
+feature1 = pvManager.GetEvent("Feature1")
+nested21 = pvManager.GetEvent("Nested21")
+pass
