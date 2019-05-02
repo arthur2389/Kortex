@@ -15,6 +15,14 @@ class File(object):
         self._path = None
 
     @property
+    def level(self):
+        return self._level
+
+    @level.setter
+    def level(self, value):
+        raise NotImplementedError
+
+    @property
     def path(self):
         self._path = path.join(self._dirname, self._name)
         return self._path

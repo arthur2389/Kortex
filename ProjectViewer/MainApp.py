@@ -18,23 +18,25 @@ files = [{"image": "C:\\Users\\USER\\Documents\\image1.jpg",
           "theme": "C:\\Users\\USER\\Documents\\arthur\\Project\\Feature3",
           "importance": PVEnums.Importance.LOW}]
 
-pvManager = PVManager(rootDir, "testProject")
+pvManager = PVManager(rootDir)
 
 for i in range(3):
-    pvManager.AddPropertyToTheme(eventPath=files[i]["theme"],
+    pvManager.AddPropertyToEvent(eventPath=files[i]["theme"],
                                  property=PVEnums.EPropertyType.IMAGE,
                                  picPath=files[i]["image"])
-    pvManager.AddPropertyToTheme(eventPath=files[i]["theme"],
+    pvManager.AddPropertyToEvent(eventPath=files[i]["theme"],
                                  property=PVEnums.EPropertyType.DESCRIPTION,
                                  desc=files[i]["desc"])
-    pvManager.AddPropertyToTheme(eventPath=files[i]["theme"],
+    pvManager.AddPropertyToEvent(eventPath=files[i]["theme"],
                                  property=PVEnums.EPropertyType.IMPORTANCE,
                                  importance=files[i]["importance"])
-    pvManager.AddPropertyToTheme(eventPath=files[i]["theme"],
+    pvManager.AddPropertyToEvent(eventPath=files[i]["theme"],
                                  property=PVEnums.EPropertyType.DATE_AND_TIME,
                                  date=date,
                                  time=time)
 
+feature4 = pvManager.CreateEvent("Feature4")
+pvManager.CreateEvent("NestedFeature4", feature4)
 
 pvManager.PrintProjectTree()
 feature1 = pvManager.GetEvent("Feature1")

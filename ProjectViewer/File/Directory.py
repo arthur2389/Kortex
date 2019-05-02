@@ -19,22 +19,22 @@ class Directory(File):
     def AddDirectory(self, file):
         self._fileList[EFileType.DIRECTORY].append(file)
 
-    def GetFile(self, fileName):
-        if self.path == fileName:
+    def GetFile(self, filePath):
+        if self.path == filePath:
             return self
         for file in self._fileList[EFileType.DIRECTORY]:
-            file = file.GetFile(fileName)
+            file = file.GetFile(filePath)
             if file != None:
                 return file
         return None
 
-    def FindEvent(self, name):
+    def FindDirectory(self, name, getEvent=False):
         if self._name == name:
-            return self._event
+            return self._event if getEvent else self
         for file in self._fileList[EFileType.DIRECTORY]:
-            event =  file.FindEvent(name)
-            if event != None:
-                return event
+            foundObj =  file.FindDirectory(name, getEvent)
+            if foundObj is not None:
+                return foundObj
         return None
 
     def GetEvent(self):

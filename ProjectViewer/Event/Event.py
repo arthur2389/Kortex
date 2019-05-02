@@ -1,6 +1,7 @@
 from ProjectViewer.PVData.PVEnums import EPropertyType as EPropertyType
 import ProjectViewer.Event.EventProperties as EventProperties
 
+
 class Event(object):
 
     def __init__(self, directory):
