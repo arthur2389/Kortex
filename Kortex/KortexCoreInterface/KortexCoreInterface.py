@@ -1,8 +1,6 @@
 from os import path
-
-from ProjectViewer.File.FileFactrory import FileFactory as FileFactory
-from ProjectViewer.File.FileFactrory import EventAdapter as EventAdapter
-from ProjectViewer.Event.EventAdapter import EventAdapter as EventAdapter
+from Kortex.KortexCore.File.FileFactrory import FileFactory as FileFactory
+from Kortex.KortexCore.Event.EventAdapter import EventAdapter as EventAdapter
 
 
 class KortexCoreInterface(object):

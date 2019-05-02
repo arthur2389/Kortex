@@ -1,8 +1,8 @@
 from os import makedirs, path
 
-from ProjectViewer.Event.Event import Event as Event
-from ProjectViewer.CommonUtils.JsonIO import JsonIO as JsonIO
-import ProjectViewer.KortexData.KortexEnums as PVEnums
+from Kortex.KortexCore.Event.Event import Event as Event
+from Kortex.KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
+import Kortex.KortexData.KortexEnums as PVEnums
 
 
 class EventAdapter(object):

@@ -1,8 +1,8 @@
 from os import path, listdir, makedirs
-from ProjectViewer.File.Directory import Directory as Directory
-from ProjectViewer.File.FunctionalFile import FuncrionalFile as FunctionalFile
-from ProjectViewer.Event.EventAdapter import EventAdapter as EventAdapter
-import ProjectViewer.KortexData.KortexEnums as PVEnums
+from Kortex.KortexCore.File.Directory import Directory as Directory
+from Kortex.KortexCore.File.FunctionalFile import FuncrionalFile as FunctionalFile
+from Kortex.KortexCore.Event.EventAdapter import EventAdapter as EventAdapter
+import Kortex.KortexData.KortexEnums as PVEnums
 
 
 class FileFactory(object):

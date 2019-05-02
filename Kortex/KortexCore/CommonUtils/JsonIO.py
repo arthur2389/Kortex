@@ -1,5 +1,6 @@
 import json
 
+
 class JsonIO(object):
 
     parsedData = {}

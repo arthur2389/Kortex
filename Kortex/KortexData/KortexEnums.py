@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class ConstantData(object):
-    projectRepoName = ".pv"
+    projectRepoName = ".kor"
     eventDataFileName = "eventData.json"
 
 
@@ -16,7 +16,7 @@ class EPropertyType(Enum):
     DESCRIPTION = 2
     DATE_AND_TIME = 3
     IMPORTANCE = 4
-
+    MONEY_BALANCE = 5
 
 class Importance(Enum):
     VERY_HIGH = 1

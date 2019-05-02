@@ -1,7 +1,7 @@
 from shutil import move
 from os import path
 
-from ProjectViewer.File.File import File as File
+from Kortex.KortexCore.File.File import File as File
 
 
 class FuncrionalFile(File):

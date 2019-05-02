@@ -1,9 +1,9 @@
 import abc
 from os import path
 
-from ProjectViewer.File.FunctionalFile import FuncrionalFile as FuncrionalFile
-from ProjectViewer.CommonUtils.JsonIO import JsonIO as JsonIO
-import ProjectViewer.KortexData.KortexEnums as PVEnums
+from Kortex.KortexCore.File.FunctionalFile import FuncrionalFile as FuncrionalFile
+from Kortex.KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
+import Kortex.KortexData.KortexEnums as PVEnums
 
 
 class PropertyBase(object):

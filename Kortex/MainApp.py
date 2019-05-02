@@ -1,5 +1,5 @@
-from ProjectViewer.KortexCoreInterface.KortexCoreInterface import KortexCoreInterface as KortexCoreInterface
-import ProjectViewer.KortexData.KortexEnums as PVEnums
+from Kortex.KortexCoreInterface.KortexCoreInterface import KortexCoreInterface as KortexCoreInterface
+import Kortex.KortexData.KortexEnums as PVEnums
 
 date = "31/12/2012"
 time = "23:58"

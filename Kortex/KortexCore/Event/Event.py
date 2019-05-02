@@ -1,5 +1,5 @@
-from ProjectViewer.KortexData.KortexEnums import EPropertyType as EPropertyType
-import ProjectViewer.Event.EventProperties as EventProperties
+from Kortex.KortexData.KortexEnums import EPropertyType as EPropertyType
+import Kortex.KortexCore.Event.EventProperties as EventProperties
 
 
 class Event(object):
