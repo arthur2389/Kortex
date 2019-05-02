@@ -3,7 +3,7 @@ from os import path
 
 from ProjectViewer.File.FunctionalFile import FuncrionalFile as FuncrionalFile
 from ProjectViewer.CommonUtils.JsonIO import JsonIO as JsonIO
-import ProjectViewer.PVData.PVEnums as PVEnums
+import ProjectViewer.KortexData.KortexEnums as PVEnums
 
 
 class PropertyBase(object):

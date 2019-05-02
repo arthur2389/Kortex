@@ -2,7 +2,7 @@ from os import makedirs, path
 
 from ProjectViewer.Event.Event import Event as Event
 from ProjectViewer.CommonUtils.JsonIO import JsonIO as JsonIO
-import ProjectViewer.PVData.PVEnums as PVEnums
+import ProjectViewer.KortexData.KortexEnums as PVEnums
 
 
 class EventAdapter(object):

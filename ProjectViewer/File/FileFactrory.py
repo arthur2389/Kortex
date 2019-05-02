@@ -2,7 +2,7 @@ from os import path, listdir, makedirs
 from ProjectViewer.File.Directory import Directory as Directory
 from ProjectViewer.File.FunctionalFile import FuncrionalFile as FunctionalFile
 from ProjectViewer.Event.EventAdapter import EventAdapter as EventAdapter
-import ProjectViewer.PVData.PVEnums as PVEnums
+import ProjectViewer.KortexData.KortexEnums as PVEnums
 
 
 class FileFactory(object):

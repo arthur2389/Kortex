@@ -1,5 +1,5 @@
-from ProjectViewer.PVManager.PVManager import PVManager as PVManager
-import ProjectViewer.PVData.PVEnums as PVEnums
+from ProjectViewer.KortexCoreInterface.KortexCoreInterface import KortexCoreInterface as KortexCoreInterface
+import ProjectViewer.KortexData.KortexEnums as PVEnums
 
 date = "31/12/2012"
 time = "23:58"
@@ -18,7 +18,7 @@ files = [{"image": "C:\\Users\\USER\\Documents\\image1.jpg",
           "theme": "C:\\Users\\USER\\Documents\\arthur\\Project\\Feature3",
           "importance": PVEnums.Importance.LOW}]
 
-pvManager = PVManager(rootDir)
+pvManager = KortexCoreInterface(rootDir)
 
 for i in range(3):
     pvManager.AddPropertyToEvent(eventPath=files[i]["theme"],

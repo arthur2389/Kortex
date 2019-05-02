@@ -1,5 +1,5 @@
 from ProjectViewer.File.File import File as File
-from ProjectViewer.PVData.PVEnums import EFileType as EFileType
+from ProjectViewer.KortexData.KortexEnums import EFileType as EFileType
 
 class Directory(File):
 

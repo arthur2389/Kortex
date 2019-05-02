@@ -1,4 +1,4 @@
-from ProjectViewer.PVData.PVEnums import EPropertyType as EPropertyType
+from ProjectViewer.KortexData.KortexEnums import EPropertyType as EPropertyType
 import ProjectViewer.Event.EventProperties as EventProperties
 
 

@@ -5,7 +5,7 @@ from ProjectViewer.File.FileFactrory import EventAdapter as EventAdapter
 from ProjectViewer.Event.EventAdapter import EventAdapter as EventAdapter
 
 
-class PVManager(object):
+class KortexCoreInterface(object):
 
     def __init__(self, rootdir):
         self._eventAdapter = EventAdapter()
