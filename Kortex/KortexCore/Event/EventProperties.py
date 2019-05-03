@@ -12,6 +12,10 @@ class PropertyBase(object):
         self._path = path.join(dirPath, KortexEnums.ConstantData.projectRepoName)
 
     @abc.abstractmethod
+    def LoadExisting(self):
+        pass
+
+    @abc.abstractmethod
     def Assign(self, *args, **kwargs):
         pass
 
@@ -19,9 +23,11 @@ class PropertyBase(object):
     def Get(self):
         pass
 
-    @abc.abstractmethod
-    def LoadExisting(self):
-        pass
+    def __str__(self):
+        _repr = self.Get()
+        if not _repr:
+            return self.__class__.__name__ + " : Property does not exists"
+        return self.__class__.__name__ + " : " + _repr
 
 
 class FileBasedProperty(PropertyBase):
@@ -32,6 +38,14 @@ class FileBasedProperty(PropertyBase):
         super(FileBasedProperty, self).__init__(dirPath)
         self._file = None
 
+    def LoadExisting(self):
+        for suffix in self.__class__.suffixes:
+            if path.exists(path.join(self._path, self.__class__.__name__ + suffix)):
+                self._file = FuncrionalFile(name=self.__class__.__name__ + suffix,
+                                            dirname=self._path,
+                                            level=0)
+                break
+
     def Assign(self, filePath):
         self._file = FuncrionalFile(name=path.basename(filePath),
                                     dirname=path.dirname(filePath),
@@ -39,18 +53,9 @@ class FileBasedProperty(PropertyBase):
         if self._file.suffix not in self.__class__.suffixes:
             raise FileNotFoundError
         self._file.CopyFile(dest=self._path, newName=self.__class__.__name__)
-        pass
 
     def Get(self):
-        return self._file.path
-
-    def LoadExisting(self):
-        for suffix in self.__class__.suffixes:
-            if path.exists(path.join(self._path, self.__class__.__name__ + suffix)):
-                self._file = FuncrionalFile(name=self.__class__.__name__,
-                                            dirname=self._path,
-                                            level=0)
-                break
+        return self._file.path if self._file else None
 
 
 class Image(FileBasedProperty):
@@ -65,16 +70,13 @@ class DescriptionProperty(PropertyBase):
         self._dataFilePath = path.join(self._path, KortexEnums.ConstantData.eventDataFileName)
         self._desc = None
 
-    def Assign(self, desc):
-        JsonIO.Write(filePath=self._dataFilePath, field=self.__class__.__name__, data=desc)
-
-    def Get(self):
-        return self._desc
-
     def LoadExisting(self):
         data = JsonIO.Read(self._dataFilePath)
         if self.__class__.__name__ in data.keys():
             self._setDesc(data[self.__class__.__name__])
+
+    def Assign(self, desc):
+        JsonIO.Write(filePath=self._dataFilePath, field=self.__class__.__name__, data=desc)
 
     @abc.abstractmethod
     def _setDesc(self, descStr):
@@ -90,6 +92,9 @@ class Description(DescriptionProperty):
     def Assign(self, desc):
         self._desc = desc
         super(Description, self).Assign(desc)
+
+    def Get(self):
+        return self._description
 
     def _setDesc(self, descStr):
         self._desc = descStr
@@ -110,6 +115,12 @@ class Importance(DescriptionProperty):
     def Get(self):
         return self._importance
 
+    def __str__(self):
+        importance = self.Get()
+        if not importance:
+            return "Importance : Property does not exists"
+        return "Importance : " + importance.name
+
     def _setDesc(self, descStr):
         self._importance = getattr(KortexEnums.Importance, descStr)
 
@@ -126,6 +137,12 @@ class MoneyBalance(DescriptionProperty):
 
     def Get(self):
         return self._moneyBalance
+
+    def __str__(self):
+        moneyBalance = self.Get()
+        if not moneyBalance:
+            return "MoneyBalance : Property does not exists"
+        return "MoneyBalance : " + str(moneyBalance)
 
     def _setDesc(self, descStr):
         self._moneyBalance = int(descStr)
@@ -208,22 +225,21 @@ class DateAndTime(DescriptionProperty):
 
     def __init__(self, dirPath):
         super(DateAndTime, self).__init__(dirPath)
-        self._date = DateAndTime.Date()
-        self._time = DateAndTime.Time()
+        self._date = None
+        self._time = None
 
     def Assign(self, date, time):
         self._setDateTime(date, time)
-        super(DateAndTime, self).Assign(str(self))
+        super(DateAndTime, self).Assign(self.Get())
 
     def Get(self):
-        return str(self)
+        if None in [self._date, self._time]:
+            return None
+        return str(self._date) + " " + str(self._time)
 
     def _setDesc(self, descStr):
         date, time = descStr.split(" ")
         self._setDateTime(date, time)
-
-    def __str__(self):
-        return str(self._date) + " " + str(self._time)
 
     def _parseDate(self, dateStr):
         if not isinstance(dateStr, str):
@@ -243,9 +259,6 @@ class DateAndTime(DescriptionProperty):
 
     def _setDateTime(self, date, time):
         day, month, year = self._parseDate(date)
-        self._date.day = day
-        self._date.month = month
-        self._date.year = year
+        self._date = DateAndTime.Date(day=day, month=month, year=year)
         hours, minutes = self._parseTime(time)
-        self._time.hours = hours
-        self._time.minutes = minutes
+        self._time = DateAndTime.Time(hours=hours, minutes=minutes)

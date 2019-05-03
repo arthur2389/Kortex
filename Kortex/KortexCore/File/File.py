@@ -15,6 +15,10 @@ class File(object):
         self._path = None
 
     @property
+    def name(self):
+        return self._name
+
+    @property
     def level(self):
         return self._level
 

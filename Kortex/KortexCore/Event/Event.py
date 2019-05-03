@@ -24,8 +24,17 @@ class Event(object):
     def GetProperty(self, propName):
         return self._propObjs[propName]
 
+    def GetName(self):
+        return self._dir.name
+
     def __setitem__(self, propName, prop):
         self._propObjs[propName] = prop
 
     def __getitem__(self, propName):
         return self._propObjs[propName].Get()
+
+    def __str__(self):
+        _str = "Event Name : " +  self.GetName() + "\n"
+        for prop in self._propObjs.values():
+            _str += str(prop) + "\n"
+        return _str
