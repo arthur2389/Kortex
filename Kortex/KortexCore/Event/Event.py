@@ -11,6 +11,10 @@ class Event(object):
                           EPropertyType.IMPORTANCE: EventProperties.Importance(self._dir.path),
                           EPropertyType.DATE_AND_TIME: EventProperties.DateAndTime(self._dir.path)}
 
+    def LoadProperties(self):
+        for prop in self._propObjs.values():
+            prop.LoadExisting()
+
     def SetDirectory(self, directory):
         self._dir = directory
 

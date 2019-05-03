@@ -8,14 +8,18 @@ class FuncrionalFile(File):
 
     def __init__(self, name, dirname, level):
         super(FuncrionalFile, self).__init__(name=name, dirname=dirname, level=level)
-        self._suffix = name.split(".")[-1]
+        self._suffix = "." + name.split(".")[-1]
+
+    @property
+    def suffix(self):
+        return self._suffix
 
     def CopyFile(self, dest, newName=None):
         super(FuncrionalFile, self).CopyFile(dest=dest)
         if not newName:
             return
         assert isinstance(newName, str)
-        newName = newName + "." + self._suffix
+        newName = newName + self._suffix
 
         move(path.join(dest, self._name), path.join(dest, newName))
 
@@ -25,3 +29,4 @@ class FuncrionalFile(File):
     def __str__(self):
         super(FuncrionalFile, self).__str__()
         return self._tabs + self._name + "\n"
+

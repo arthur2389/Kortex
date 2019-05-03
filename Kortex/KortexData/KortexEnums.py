@@ -18,6 +18,7 @@ class EPropertyType(Enum):
     IMPORTANCE = 4
     MONEY_BALANCE = 5
 
+
 class Importance(Enum):
     VERY_HIGH = 1
     HIGH = 2

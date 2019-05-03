@@ -17,15 +17,23 @@ class EventAdapter(object):
         return self.propertySetters[propName]
 
     def GetEvent(self, directory):
+        # Create event object
+        event = Event(directory)
+
         # Create directory for metadata
         repoFolder = path.join(directory.path, PVEnums.ConstantData.projectRepoName)
         if not path.exists(repoFolder):
             makedirs(repoFolder)
-        # Create metadata file
+
         eventDataFile = path.join(repoFolder, PVEnums.ConstantData.eventDataFileName)
+
+        # In case the event is new, create the metadata file
         if not path.exists(eventDataFile):
             JsonIO.CreateEmptyFile(eventDataFile)
-        return Event(directory)
+        # In case the event already exists from previous activations
+        else:
+            event.LoadProperties()
+        return event
 
     def AddDescription(self, event, desc, **kwargs):
         if None in [event, desc]:

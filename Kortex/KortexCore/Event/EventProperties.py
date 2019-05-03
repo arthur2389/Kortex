@@ -3,13 +3,13 @@ from os import path
 
 from Kortex.KortexCore.File.FunctionalFile import FuncrionalFile as FuncrionalFile
 from Kortex.KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
-import Kortex.KortexData.KortexEnums as PVEnums
+import Kortex.KortexData.KortexEnums as KortexEnums
 
 
 class PropertyBase(object):
 
     def __init__(self, dirPath):
-        self._path = path.join(dirPath, PVEnums.ConstantData.projectRepoName)
+        self._path = path.join(dirPath, KortexEnums.ConstantData.projectRepoName)
 
     @abc.abstractmethod
     def Assign(self, *args, **kwargs):
@@ -19,8 +19,14 @@ class PropertyBase(object):
     def Get(self):
         pass
 
+    @abc.abstractmethod
+    def LoadExisting(self):
+        pass
+
 
 class FileBasedProperty(PropertyBase):
+
+    suffixes = []
 
     def __init__(self, dirPath):
         super(FileBasedProperty, self).__init__(dirPath)
@@ -30,21 +36,33 @@ class FileBasedProperty(PropertyBase):
         self._file = FuncrionalFile(name=path.basename(filePath),
                                     dirname=path.dirname(filePath),
                                     level=0)
+        if self._file.suffix not in self.__class__.suffixes:
+            raise FileNotFoundError
         self._file.CopyFile(dest=self._path, newName=self.__class__.__name__)
+        pass
 
     def Get(self):
         return self._file.path
 
+    def LoadExisting(self):
+        for suffix in self.__class__.suffixes:
+            if path.exists(path.join(self._path, self.__class__.__name__ + suffix)):
+                self._file = FuncrionalFile(name=self.__class__.__name__,
+                                            dirname=self._path,
+                                            level=0)
+                break
+
 
 class Image(FileBasedProperty):
-    pass
+
+    suffixes = [".jpg", ".png", ".gif", ".svg"]
 
 
 class DescriptionProperty(PropertyBase):
 
     def __init__(self, dirPath):
         super(DescriptionProperty, self).__init__(dirPath)
-        self._dataFilePath = path.join(self._path, PVEnums.ConstantData.eventDataFileName)
+        self._dataFilePath = path.join(self._path, KortexEnums.ConstantData.eventDataFileName)
         self._desc = None
 
     def Assign(self, desc):
@@ -53,9 +71,28 @@ class DescriptionProperty(PropertyBase):
     def Get(self):
         return self._desc
 
+    def LoadExisting(self):
+        data = JsonIO.Read(self._dataFilePath)
+        if self.__class__.__name__ in data.keys():
+            self._setDesc(data[self.__class__.__name__])
+
+    @abc.abstractmethod
+    def _setDesc(self, descStr):
+        pass
+
 
 class Description(DescriptionProperty):
-    pass
+
+    def __init__(self, dirPath):
+        super(Description, self).__init__(dirPath)
+        self._description = None
+
+    def Assign(self, desc):
+        self._desc = desc
+        super(Description, self).Assign(desc)
+
+    def _setDesc(self, descStr):
+        self._desc = descStr
 
 
 class Importance(DescriptionProperty):
@@ -65,13 +102,33 @@ class Importance(DescriptionProperty):
         self._importance = None
 
     def Assign(self, importance):
-        if not isinstance(importance, PVEnums.Importance):
+        if not isinstance(importance, KortexEnums.Importance):
             raise TypeError
         self._importance = importance
         super(Importance, self).Assign(importance.name)
 
     def Get(self):
         return self._importance
+
+    def _setDesc(self, descStr):
+        self._importance = getattr(KortexEnums.Importance, descStr)
+
+
+class MoneyBalance(DescriptionProperty):
+
+    def __init__(self, dirPath):
+        super(MoneyBalance, self).__init__(dirPath)
+        self._moneyBalance = None
+
+    def Assign(self, moneyBalance):
+        self._moneyBalance = int(moneyBalance)
+        super(MoneyBalance, self).Assign(moneyBalance)
+
+    def Get(self):
+        return self._moneyBalance
+
+    def _setDesc(self, descStr):
+        self._moneyBalance = int(descStr)
 
 
 class DateAndTime(DescriptionProperty):
@@ -110,7 +167,7 @@ class DateAndTime(DescriptionProperty):
 
         @property
         def day(self):
-            return self._year
+            return self._day
 
         @day.setter
         def day(self, value):
@@ -135,7 +192,7 @@ class DateAndTime(DescriptionProperty):
 
         @hours.setter
         def hours(self, value):
-            if value < 0 or  value > 23:
+            if value < 0 or value > 23:
                 raise ValueError
             self._hours = value
 
@@ -155,17 +212,15 @@ class DateAndTime(DescriptionProperty):
         self._time = DateAndTime.Time()
 
     def Assign(self, date, time):
-        day, month, year = self._parseDate(date)
-        self._date.day = day
-        self._date.month = month
-        self._date.year = year
-        hours, minutes = self._parseTime(time)
-        self._time.hours = hours
-        self._time.minutes = minutes
+        self._setDateTime(date, time)
         super(DateAndTime, self).Assign(str(self))
 
     def Get(self):
         return str(self)
+
+    def _setDesc(self, descStr):
+        date, time = descStr.split(" ")
+        self._setDateTime(date, time)
 
     def __str__(self):
         return str(self._date) + " " + str(self._time)
@@ -185,3 +240,12 @@ class DateAndTime(DescriptionProperty):
         if len(dataList) != 2:
             raise TypeError
         return int(dataList[0]), int(dataList[1])
+
+    def _setDateTime(self, date, time):
+        day, month, year = self._parseDate(date)
+        self._date.day = day
+        self._date.month = month
+        self._date.year = year
+        hours, minutes = self._parseTime(time)
+        self._time.hours = hours
+        self._time.minutes = minutes
