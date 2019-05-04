@@ -6,14 +6,19 @@ from Kortex.KortexCore.Event.EventAdapter import EventAdapter as EventAdapter
 class KortexCoreInterface(object):
 
     def __init__(self, rootdir):
+        def _getName(_dir):
+            return _dir.name
+
         self._eventAdapter = EventAdapter()
         self._fileFactory = FileFactory()
         self._project = self._fileFactory.GenerateDirectory(rootdir)
+        allDirs = []
+        self._project.GetAllDirectories(dirList=allDirs)
+        self._allEvents = list(map(_getName, allDirs))
 
-    def AddPropertyToEvent(self, eventPath, property, picPath=None,
+    def AddPropertyToEvent(self, event, property, picPath=None,
                            desc=None, importance=None, date=None, time=None):
-        eventFolder = self._project.GetFile(filePath=eventPath)
-        self._eventAdapter[property](event=eventFolder.GetEvent(),
+        self._eventAdapter[property](event=event,
                                      picPath=picPath,
                                      desc=desc,
                                      importance=importance,
@@ -21,9 +26,15 @@ class KortexCoreInterface(object):
                                      time=time)
 
     def CreateEvent(self, eventName, holdingEvent=None):
+        if eventName in self._allEvents:
+            raise NotImplementedError
         holdingEvent = holdingEvent or self._project.GetEvent()
         _dir = holdingEvent.GetDirectory()
         createdDir = self._fileFactory.GenerateDirectory(path.join(_dir.path, eventName), _dir.level + 1)
+        # Append the event name to all the event name list
+        _dir.AddDirectory(createdDir)
+        self._allEvents.append(createdDir.name)
+
         return createdDir.GetEvent()
 
     def GetEvent(self, name):

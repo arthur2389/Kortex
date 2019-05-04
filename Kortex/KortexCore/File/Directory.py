@@ -37,6 +37,11 @@ class Directory(File):
                 return foundObj
         return None
 
+    def GetAllDirectories(self, dirList):
+        for file in self._fileList[EFileType.DIRECTORY]:
+            dirList.append(file)
+            file.GetAllDirectories(dirList)
+
     def GetEvent(self):
         return self._event
 

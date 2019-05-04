@@ -1,8 +1,9 @@
 from os import path, listdir, makedirs
+
 from Kortex.KortexCore.File.Directory import Directory as Directory
 from Kortex.KortexCore.File.FunctionalFile import FuncrionalFile as FunctionalFile
 from Kortex.KortexCore.Event.EventAdapter import EventAdapter as EventAdapter
-import Kortex.KortexData.KortexEnums as PVEnums
+import Kortex.KortexData.KortexEnums as KortexEnums
 
 
 class FileFactory(object):
@@ -28,7 +29,7 @@ class FileFactory(object):
         event = self._eventAdapter.GetEvent(_dir)
         _dir.SetEvent(event)
         fileList = listdir(pathFile)
-        fileList.remove(PVEnums.ConstantData.projectRepoName)
+        fileList.remove(KortexEnums.ConstantData.projectRepoName)
 
         for file in fileList:
             fullPath = path.join(pathFile, file)

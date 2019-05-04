@@ -9,7 +9,8 @@ class Event(object):
         self._propObjs = {EPropertyType.DESCRIPTION: EventProperties.Description(self._dir.path),
                           EPropertyType.IMAGE: EventProperties.Image(self._dir.path),
                           EPropertyType.IMPORTANCE: EventProperties.Importance(self._dir.path),
-                          EPropertyType.DATE_AND_TIME: EventProperties.DateAndTime(self._dir.path)}
+                          EPropertyType.DATE_AND_TIME: EventProperties.DateAndTime(self._dir.path),
+                          EPropertyType.MONEY_BALANCE: EventProperties.MoneyBalance(self._dir.path)}
 
     def LoadProperties(self):
         for prop in self._propObjs.values():
@@ -26,9 +27,6 @@ class Event(object):
 
     def GetName(self):
         return self._dir.name
-
-    def __setitem__(self, propName, prop):
-        self._propObjs[propName] = prop
 
     def __getitem__(self, propName):
         return self._propObjs[propName].Get()
