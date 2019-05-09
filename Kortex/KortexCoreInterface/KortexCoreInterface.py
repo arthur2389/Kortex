@@ -45,3 +45,19 @@ class KortexCoreInterface(object):
 
     def PrintProjectTree(self):
         print("Project : \n\n" + str(self._project))
+
+
+class PropertyArgs(object):
+
+    def __init__(self, imgPath=None,
+                 description=None,
+                 importance=None,
+                 data=None,
+                 time=None,
+                 moneyBalance=None):
+        self.imgPath = imgPath
+        self.description = description
+        self.importance = importance
+        self.data = data
+        self.time = time
+        self.moneyBalance = moneyBalance

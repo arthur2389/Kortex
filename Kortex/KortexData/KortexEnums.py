@@ -20,8 +20,8 @@ class EPropertyType(Enum):
 
 
 class Importance(Enum):
-    VERY_HIGH = 1
-    HIGH = 2
+    TRIVIAL = 1
+    LOW = 2
     MEDIUM = 3
-    LOW = 4
-    TRIVIAL = 5
+    HIGH = 4
+    VERY_HIGH = 5

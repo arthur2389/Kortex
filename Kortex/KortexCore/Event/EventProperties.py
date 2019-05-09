@@ -100,7 +100,14 @@ class Description(DescriptionProperty):
         self._desc = descStr
 
 
-class Importance(DescriptionProperty):
+class QuantifiableProperty(DescriptionProperty):
+
+    @abc.abstractmethod
+    def __int__(self):
+        pass
+
+
+class Importance(QuantifiableProperty):
 
     def __init__(self, dirPath):
         super(Importance, self).__init__(dirPath)
@@ -115,6 +122,9 @@ class Importance(DescriptionProperty):
     def Get(self):
         return self._importance
 
+    def __int__(self):
+        return int(self._importance)
+
     def __str__(self):
         importance = self.Get()
         if not importance:
@@ -125,7 +135,7 @@ class Importance(DescriptionProperty):
         self._importance = getattr(KortexEnums.Importance, descStr)
 
 
-class MoneyBalance(DescriptionProperty):
+class MoneyBalance(QuantifiableProperty):
 
     def __init__(self, dirPath):
         super(MoneyBalance, self).__init__(dirPath)
@@ -144,13 +154,19 @@ class MoneyBalance(DescriptionProperty):
             return "MoneyBalance : Property does not exists"
         return "MoneyBalance : " + str(moneyBalance)
 
+    def __int__(self):
+        return int(self._moneyBalance)
+
     def _setDesc(self, descStr):
         self._moneyBalance = int(descStr)
 
 
-class DateAndTime(DescriptionProperty):
+class DateAndTime(QuantifiableProperty):
 
     class Date(object):
+
+        daysInMonth = 30
+        daysInYear = 365
 
         def __init__(self, year=0, month=0, day=0):
             if year < 0 or month < 0 or day < 0 or month > 12 or day > 31:
@@ -161,6 +177,9 @@ class DateAndTime(DescriptionProperty):
 
         def __str__(self):
             return str(self.day) + "/" + str(self.month) + "/" + str(self.year)
+
+        def __int__(self):
+            return self.day + self.month * self.__class__.daysInMonth + self.year * self.__class__.daysInYear
 
         @property
         def year(self):
@@ -194,6 +213,8 @@ class DateAndTime(DescriptionProperty):
 
     class Time(object):
 
+        minutesInHours = 60
+
         def __init__(self, hours=0, minutes=0):
             if hours < 0 or hours > 23 or minutes < 0 or minutes > 59:
                 raise ValueError
@@ -202,6 +223,9 @@ class DateAndTime(DescriptionProperty):
 
         def __str__(self):
             return str(self.hours) + ":" + str(self.minutes)
+
+        def __int__(self):
+            return self.minutes + self.hours * self.__class__.minutesInHours
 
         @property
         def hours(self):
@@ -223,6 +247,8 @@ class DateAndTime(DescriptionProperty):
                 raise ValueError
             self._minutes = value
 
+    minutesInDay = 1440
+
     def __init__(self, dirPath):
         super(DateAndTime, self).__init__(dirPath)
         self._date = None
@@ -236,6 +262,9 @@ class DateAndTime(DescriptionProperty):
         if None in [self._date, self._time]:
             return None
         return str(self._date) + " " + str(self._time)
+
+    def __int__(self):
+        return int(self._time) + int(self._date) * self.__class__.minutesInDay
 
     def _setDesc(self, descStr):
         date, time = descStr.split(" ")

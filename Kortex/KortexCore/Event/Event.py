@@ -31,6 +31,20 @@ class Event(object):
     def __getitem__(self, propName):
         return self._propObjs[propName].Get()
 
+    def __setitem__(self, propName, propArgs):
+        self._propObjs[propName].Assign(propArgs)
+
+    def GetEventList(self, sortBy=None):
+        def _sort(event, sortProperty):
+            return int(event[sortProperty])
+
+        dirList = []
+        self._dir.GetAllDirectories(dirList)
+        eventList = [_dir.GetEvent() for _dir in dirList]
+        if sortBy:
+            eventList.sort(key=lambda event: _sort(event, sortBy))
+        return eventList
+
     def __str__(self):
         _str = "Event Name : " +  self.GetName() + "\n"
         for prop in self._propObjs.values():
