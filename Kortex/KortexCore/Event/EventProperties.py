@@ -126,7 +126,7 @@ class Importance(QuantifiableProperty):
         return self._importance
 
     def __int__(self):
-        return int(self._importance)
+        return self._importance.value
 
     def __str__(self):
         importance = self.Get()

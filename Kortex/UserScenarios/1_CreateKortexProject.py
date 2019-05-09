@@ -58,6 +58,8 @@ n111[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance=KortexEnums
 n112[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance=KortexEnums.Importance.HIGH)
 n113[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance=KortexEnums.Importance.MEDIUM)
 
+importanceSorted = n11.GetEventList(sortBy=KortexEnums.EPropertyType.IMPORTANCE)
+
 # Get all events in the project
 root = kortexCore.GetEvent(name="Project")
 allEvents = root.GetEventList()
