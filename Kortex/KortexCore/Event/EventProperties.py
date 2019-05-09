@@ -62,6 +62,9 @@ class Image(FileBasedProperty):
 
     suffixes = [".jpg", ".png", ".gif", ".svg"]
 
+    def Assign(self, propArgs):
+        super(Image, self).Assign(propArgs.imgPath)
+
 
 class DescriptionProperty(PropertyBase):
 
@@ -89,9 +92,9 @@ class Description(DescriptionProperty):
         super(Description, self).__init__(dirPath)
         self._description = None
 
-    def Assign(self, desc):
-        self._desc = desc
-        super(Description, self).Assign(desc)
+    def Assign(self, propArgs):
+        self._desc = propArgs.description
+        super(Description, self).Assign(propArgs.description)
 
     def Get(self):
         return self._description
@@ -111,13 +114,13 @@ class Importance(QuantifiableProperty):
 
     def __init__(self, dirPath):
         super(Importance, self).__init__(dirPath)
-        self._importance = None
+        self._importance = KortexEnums.Importance.TRIVIAL
 
-    def Assign(self, importance):
-        if not isinstance(importance, KortexEnums.Importance):
+    def Assign(self, propArgs):
+        if not isinstance(propArgs.importance, KortexEnums.Importance):
             raise TypeError
-        self._importance = importance
-        super(Importance, self).Assign(importance.name)
+        self._importance = propArgs.importance
+        super(Importance, self).Assign(propArgs.importance.name)
 
     def Get(self):
         return self._importance
@@ -139,11 +142,11 @@ class MoneyBalance(QuantifiableProperty):
 
     def __init__(self, dirPath):
         super(MoneyBalance, self).__init__(dirPath)
-        self._moneyBalance = None
+        self._moneyBalance = 0
 
-    def Assign(self, moneyBalance):
-        self._moneyBalance = int(moneyBalance)
-        super(MoneyBalance, self).Assign(moneyBalance)
+    def Assign(self, propArgs):
+        self._moneyBalance = int(propArgs.moneyBalance)
+        super(MoneyBalance, self).Assign(propArgs.moneyBalance)
 
     def Get(self):
         return self._moneyBalance
@@ -168,7 +171,7 @@ class DateAndTime(QuantifiableProperty):
         daysInMonth = 30
         daysInYear = 365
 
-        def __init__(self, year=0, month=0, day=0):
+        def __init__(self, year=2010, month=1, day=1):
             if year < 0 or month < 0 or day < 0 or month > 12 or day > 31:
                 raise ValueError
             self._year = year
@@ -222,7 +225,11 @@ class DateAndTime(QuantifiableProperty):
             self._minutes = minutes
 
         def __str__(self):
-            return str(self.hours) + ":" + str(self.minutes)
+            if self.minutes == 0:
+                minStr = "00"
+            else:
+                minStr = str(self.minutes)
+            return str(self.hours) + ":" + minStr
 
         def __int__(self):
             return self.minutes + self.hours * self.__class__.minutesInHours
@@ -251,11 +258,11 @@ class DateAndTime(QuantifiableProperty):
 
     def __init__(self, dirPath):
         super(DateAndTime, self).__init__(dirPath)
-        self._date = None
-        self._time = None
+        self._date = DateAndTime.Date()
+        self._time = DateAndTime.Time()
 
-    def Assign(self, date, time):
-        self._setDateTime(date, time)
+    def Assign(self, propArgs):
+        self._setDateTime(propArgs.date, propArgs.time)
         super(DateAndTime, self).Assign(self.Get())
 
     def Get(self):

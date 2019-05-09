@@ -36,7 +36,7 @@ class Event(object):
 
     def GetEventList(self, sortBy=None):
         def _sort(event, sortProperty):
-            return int(event[sortProperty])
+            return int(event.GetProperty(sortProperty))
 
         dirList = []
         self._dir.GetAllDirectories(dirList)
@@ -45,8 +45,5 @@ class Event(object):
             eventList.sort(key=lambda event: _sort(event, sortBy))
         return eventList
 
-    def __str__(self):
-        _str = "Event Name : " +  self.GetName() + "\n"
-        for prop in self._propObjs.values():
-            _str += str(prop) + "\n"
-        return _str
+    def __repr__(self):
+        return "Event << " + self.GetName() + " >>"

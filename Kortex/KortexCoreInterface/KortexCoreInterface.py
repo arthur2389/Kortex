@@ -16,15 +16,6 @@ class KortexCoreInterface(object):
         self._project.GetAllDirectories(dirList=allDirs)
         self._allEvents = list(map(_getName, allDirs))
 
-    def AddPropertyToEvent(self, event, property, picPath=None,
-                           desc=None, importance=None, date=None, time=None):
-        self._eventAdapter[property](event=event,
-                                     picPath=picPath,
-                                     desc=desc,
-                                     importance=importance,
-                                     date=date,
-                                     time=time)
-
     def CreateEvent(self, eventName, holdingEvent=None):
         if eventName in self._allEvents:
             raise NotImplementedError
@@ -52,12 +43,12 @@ class PropertyArgs(object):
     def __init__(self, imgPath=None,
                  description=None,
                  importance=None,
-                 data=None,
+                 date=None,
                  time=None,
                  moneyBalance=None):
         self.imgPath = imgPath
         self.description = description
         self.importance = importance
-        self.data = data
+        self.date = date
         self.time = time
         self.moneyBalance = moneyBalance
