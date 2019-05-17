@@ -7,9 +7,10 @@ rootDir = input("Set your kortex project root directory: ")
 kortexCore = KortexCoreInterface(rootDir)
 
 # Get some events
+n111 = kortexCore.GetEvent("Nested111")
 n112 = kortexCore.GetEvent("Nested112")
-n113 = kortexCore.GetEvent("Nested112")
-n114 = kortexCore.GetEvent("Nested112")
+n113 = kortexCore.GetEvent("Nested113")
+n114 = kortexCore.GetEvent("Nested114")
 
 # Set date and time
 n112[KortexEnums.EPropertyType.DATE_AND_TIME] = PropertyArgs(date="14/10/2020", time="15:00")
@@ -29,7 +30,37 @@ n12[KortexEnums.EPropertyType.DATE_AND_TIME] = PropertyArgs(date="1/1/2021", tim
 n13[KortexEnums.EPropertyType.DATE_AND_TIME] = PropertyArgs(date="1/1/2021", time="11:50")
 n14[KortexEnums.EPropertyType.DATE_AND_TIME] = PropertyArgs(date="1/1/2021", time="12:30")
 
-# Get all events in the project
+kortexCore.RemoveEvent(n112)
+kortexCore.RemoveEvent(n113)
+
+try:
+    kortexCore.MoveEvent(n11, n111)
+except NotImplementedError:
+    pass
+try:
+    kortexCore.MoveEvent(n11, n114)
+except NotImplementedError:
+    pass
+
+f1 = kortexCore.GetEvent("Feature1")
+f2 = kortexCore.GetEvent("Feature2")
+
+try:
+    kortexCore.MoveEvent(f1, n111)
+except NotImplementedError:
+    pass
+try:
+    kortexCore.MoveEvent(f1, n114)
+except NotImplementedError:
+    pass
+
+kortexCore.MoveEvent(f2, n114)
+
 root = kortexCore.GetEvent(name="Project")
+kortexCore.MoveEvent(n11, root)
+kortexCore.MoveEvent(n14, root)
+
+
+# Get all events in the project
 allEvents = root.GetEventList()
 allEventSortedDate = root.GetEventList(sortBy=KortexEnums.EPropertyType.DATE_AND_TIME)

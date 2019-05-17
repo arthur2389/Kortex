@@ -28,6 +28,17 @@ class KortexCoreInterface(object):
 
         return createdDir.GetEvent()
 
+    def RemoveEvent(self, event):
+        directory = event.GetDirectory()
+        dirName = directory.name
+        directory.Remove()
+        self._allEvents.remove(dirName)
+
+    def MoveEvent(self, event, targetHoldingEvent):
+        directory = event.GetDirectory()
+        targetDirectory = targetHoldingEvent.GetDirectory()
+        directory.Move(targetDirectory)
+
     def GetEvent(self, name):
         event = self._project.FindDirectory(name=name, getEvent=True)
         if not event:

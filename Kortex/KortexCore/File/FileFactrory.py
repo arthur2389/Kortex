@@ -11,21 +11,21 @@ class FileFactory(object):
     def __init__(self):
         self._eventAdapter = EventAdapter()
 
-    def GenerateFunctionalFile(self, pathFile, level=0):
+    def GenerateFunctionalFile(self, pathFile, level=0, holdingDir=None):
         if not pathFile:
             return
         assert path.isfile(pathFile)
         filename, fileDirname = self._getFileAndDirName(pathFile=pathFile)
-        return FunctionalFile(filename, fileDirname, level)
+        return FunctionalFile(filename, fileDirname, level, holdingDir)
 
-    def GenerateDirectory(self, pathFile, level=0):
+    def GenerateDirectory(self, pathFile, level=0, holdingDir=None):
 
         # Create the directory in file system if it doesn't exists
         if not path.exists(pathFile):
             makedirs(pathFile)
 
         filename, fileDirname = self._getFileAndDirName(pathFile=pathFile)
-        _dir = Directory(filename, fileDirname, level)
+        _dir = Directory(filename, fileDirname, level, holdingDir)
         event = self._eventAdapter.GetEvent(_dir)
         _dir.SetEvent(event)
         fileList = listdir(pathFile)
@@ -34,10 +34,10 @@ class FileFactory(object):
         for file in fileList:
             fullPath = path.join(pathFile, file)
             if path.isdir(fullPath):
-                fileObj = self.GenerateDirectory(fullPath, level + 1)
+                fileObj = self.GenerateDirectory(fullPath, level + 1, _dir)
                 _dir.AddDirectory(fileObj)
             else:
-                fileObj = self.GenerateFunctionalFile(fullPath, level + 1)
+                fileObj = self.GenerateFunctionalFile(fullPath, level + 1, _dir)
                 _dir.AddFunctionalFile(fileObj)
         return _dir
 

@@ -43,13 +43,15 @@ class FileBasedProperty(PropertyBase):
             if path.exists(path.join(self._path, self.__class__.__name__ + suffix)):
                 self._file = FuncrionalFile(name=self.__class__.__name__ + suffix,
                                             dirname=self._path,
-                                            level=0)
+                                            level=0,
+                                            holdingDir=None)
                 break
 
     def Assign(self, filePath):
         self._file = FuncrionalFile(name=path.basename(filePath),
                                     dirname=path.dirname(filePath),
-                                    level=0)
+                                    level=0,
+                                    holdingDir=None)
         if self._file.suffix not in self.__class__.suffixes:
             raise FileNotFoundError
         self._file.CopyFile(dest=self._path, newName=self.__class__.__name__)
