@@ -5,18 +5,29 @@ from Kortex.KortexCore.Event.EventAdapter import EventAdapter as EventAdapter
 
 class KortexCoreInterface(object):
 
+    """
+    Interface class for Kortex core (engine) operations.
+    """
     def __init__(self, rootdir):
-        def _getName(_dir):
-            return _dir.name
-
+        """
+        Create interface instance as well as a new project
+        param: rootdir: The root directory of the project. If the direcory doesn't
+        exist it will be created (str)
+        """
         self._eventAdapter = EventAdapter()
         self._fileFactory = FileFactory()
         self._project = self._fileFactory.GenerateDirectory(rootdir)
         allDirs = []
         self._project.GetAllDirectories(dirList=allDirs)
-        self._allEvents = list(map(_getName, allDirs))
+        self._allEvents = list(map(lambda _dir: _dir.name, allDirs))
 
     def CreateEvent(self, eventName, holdingEvent=None):
+        """
+        Create new event. The new event cannot have the same name the other event in the project
+        param: eventName: The name of the new event (str)
+        param: holdingEvent: The holding event of the created event (Event)
+        return: created event (Event)
+        """
         if eventName in self._allEvents:
             raise NotImplementedError
         holdingEvent = holdingEvent or self._project.GetEvent()
@@ -29,34 +40,63 @@ class KortexCoreInterface(object):
         return createdDir.GetEvent()
 
     def RemoveEvent(self, event):
+        """
+        Remove existing event
+        param: event: The event to remove (Event)
+        """
         directory = event.GetDirectory()
         dirName = directory.name
         directory.Remove()
         self._allEvents.remove(dirName)
 
     def MoveEvent(self, event, targetHoldingEvent):
+        """
+        Move event from it's holding event to a new holding event
+        param: event: The event to be moved (Event)
+        param: targetHoldingEvent: The new holding event. The holding event cannot be held in
+        the moved event (Event)
+        """
         directory = event.GetDirectory()
         targetDirectory = targetHoldingEvent.GetDirectory()
         directory.Move(targetDirectory)
 
     def GetEvent(self, name):
+        """
+        Get event by name.
+        param: name: The name of the event to return (str)
+        return: The found event (Event)
+        """
         event = self._project.FindDirectory(name=name, getEvent=True)
         if not event:
             raise FileNotFoundError
         return event
 
     def PrintProjectTree(self):
+        """
+        Debug procedure, print all project to command line
+        """
         print("Project : \n\n" + str(self._project))
 
 
 class PropertyArgs(object):
 
+    """
+    Input class for assigning new property to an event
+    """
     def __init__(self, imgPath=None,
                  description=None,
                  importance=None,
                  date=None,
                  time=None,
                  moneyBalance=None):
+        """
+        param: imgPath: full path of image [".jpg", ".png", ".gif", ".svg"] file (str)
+        param description: event description (str)
+        param importance: event importance (KortexEnums.Importance)
+        param date: event date (DD/MM/YYYY str)
+        param: time: event time (HH:MM str)
+        param: moneyBalance: event money in/out (int)
+        """
         self.imgPath = imgPath
         self.description = description
         self.importance = importance
