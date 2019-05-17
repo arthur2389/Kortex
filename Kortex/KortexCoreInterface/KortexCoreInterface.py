@@ -14,9 +14,13 @@ class KortexCoreInterface(object):
         param: rootdir: The root directory of the project. If the direcory doesn't
         exist it will be created (str)
         """
+
+        # Create main utils and initialize the project
         self._eventAdapter = EventAdapter()
         self._fileFactory = FileFactory()
         self._project = self._fileFactory.GenerateDirectory(rootdir)
+
+        # Map and store all the event names
         allDirs = []
         self._project.GetAllDirectories(dirList=allDirs)
         self._allEvents = list(map(lambda _dir: _dir.name, allDirs))
@@ -28,15 +32,23 @@ class KortexCoreInterface(object):
         param: holdingEvent: The holding event of the created event (Event)
         return: created event (Event)
         """
+
+        # Check if event name already exists
         if eventName in self._allEvents:
             raise NotImplementedError
+
+        # Assign holding event. Default is the root event
         holdingEvent = holdingEvent or self._project.GetEvent()
+
+        # Create directory (and the event) inside the holding event
         _dir = holdingEvent.GetDirectory()
         createdDir = self._fileFactory.GenerateDirectory(path.join(_dir.path, eventName), _dir.level + 1)
+
         # Append the event name to all the event name list
         _dir.AddDirectory(createdDir)
         self._allEvents.append(createdDir.name)
 
+        # From the created directory return the created event
         return createdDir.GetEvent()
 
     def RemoveEvent(self, event):
@@ -44,6 +56,8 @@ class KortexCoreInterface(object):
         Remove existing event
         param: event: The event to remove (Event)
         """
+
+        # Extract the event directory from the event, use it to remove itself (and the event)
         directory = event.GetDirectory()
         dirName = directory.name
         directory.Remove()
@@ -56,7 +70,11 @@ class KortexCoreInterface(object):
         param: targetHoldingEvent: The new holding event. The holding event cannot be held in
         the moved event (Event)
         """
+
+        # Extract the event directory from the event
         directory = event.GetDirectory()
+
+        # Extract the target event directory and move the directories
         targetDirectory = targetHoldingEvent.GetDirectory()
         directory.Move(targetDirectory)
 

@@ -1,4 +1,9 @@
 def singleton(class_):
+    """
+    singleton decorator makes sure there is one class instance in system
+    param: class_: controlled class
+    return: class_ only instance
+    """
     instances = {}
 
     def getinstance(*args, **kwargs):

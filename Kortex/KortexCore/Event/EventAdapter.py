@@ -8,8 +8,18 @@ import Kortex.KortexData.KortexEnums as KortexEnums
 
 @singleton
 class EventAdapter(object):
+    """
+    Adapter between Event and File. Also stand for factory for events
+    """
 
     def GetEvent(self, directory):
+        """
+        Creates new event and creates .kor metadata folder, as well as metadata file
+        for the event if needed.
+
+        param: directory: holding directory of the event (Directory)
+        return: new event (Event)
+        """
         # Create event object
         event = Event(directory)
 
