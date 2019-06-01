@@ -1,4 +1,5 @@
 from Kortex.KortexData.KortexEnums import EPropertyType as EPropertyType
+from Kortex.KortexData.KortexEnums import ETimeInterval as ETimeInterval
 import Kortex.KortexCore.Event.EventProperties as EventProperties
 
 
@@ -9,6 +10,11 @@ class Event(object):
     and a reference to it's holding directory that provides the event the abilities that are
     related to file system.
     """
+    minuteToTimeUnit = {ETimeInterval.MINUTE: 1,
+                        ETimeInterval.HOUR: EventProperties.DateAndTime.Time.minutesInHours,
+                        ETimeInterval.DAY: EventProperties.DateAndTime.minutesInDay}
+
+
     def __init__(self, directory):
         """
         Initialize event object with default properties and a holding directory
@@ -80,9 +86,25 @@ class Event(object):
         dirList = []
         self._dir.GetAllDirectories(dirList)
         eventList = [_dir.GetEvent() for _dir in dirList]
-        if sortBy:
+        if not sortBy:
+            return eventList
+        if sortBy == EPropertyType.DURATION:
+            eventList.sort(key=lambda event: event.GetDuration(timeUnit=ETimeInterval.MINUTE))
+        else:
             eventList.sort(key=lambda event: int(event.GetProperty(sortBy)))
         return eventList
+
+    def GetDuration(self, timeUnit):
+        """
+        param timeUnit:
+        :return:
+        """
+        startDate, endDate =\
+            self._propObjs[EPropertyType.START_DATE_AND_TIME], self._propObjs[EPropertyType.END_DATE_AND_TIME]
+        if not endDate.isset:
+            return float(0)
+        timeBetweenStartAndEnd = int(endDate) - int(startDate)
+        return float(timeBetweenStartAndEnd)/float(self.__class__.minuteToTimeUnit[timeUnit])
 
     def __repr__(self):
         """

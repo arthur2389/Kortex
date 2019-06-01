@@ -413,6 +413,18 @@ class DateAndTime(QuantifiableProperty):
         self._time = None
         self._dateAndTimeSet = False
 
+    @property
+    def isset(self):
+        """
+        return: is the date and time set for the event
+        type: Bool
+        """
+        return self._dateAndTimeSet
+
+    @isset.setter
+    def isset(self, value):
+        raise NotImplementedError
+
     def Get(self):
         """
         Get value of date and time by string
@@ -480,6 +492,8 @@ class StartDateAndTime(DateAndTime):
         super(StartDateAndTime, self).__init__(dirPath)
         now = datetime.datetime.now()
         self._setDateTime(date=now.strftime("%d/%m/%Y"), time=now.strftime("%H:%M"))
+        super(StartDateAndTime, self).Assign(assignArgs=self.Get())
+
 
     def Assign(self, assignArgs, event, **kwargs):
         """
@@ -488,9 +502,9 @@ class StartDateAndTime(DateAndTime):
         """
         endDateAndTime = event.GetProperty(KortexEnums.EPropertyType.END_DATE_AND_TIME)
         self._setDateTime(assignArgs.date, assignArgs.time)
-        if endDateAndTime._dateAndTimeSet and int(endDateAndTime) < int(self):
+        if endDateAndTime.isset and int(endDateAndTime) < int(self):
             raise NotImplementedError
-        super(DateAndTime, self).Assign(assignArgs=self.Get())
+        super(StartDateAndTime, self).Assign(assignArgs=self.Get())
 
 
 class EndDateAndTime(DateAndTime):
@@ -504,4 +518,4 @@ class EndDateAndTime(DateAndTime):
         self._setDateTime(assignArgs.date, assignArgs.time)
         if int(startDateAndTime) > int(self):
             raise NotImplementedError
-        super(DateAndTime, self).Assign(assignArgs=self.Get())
+        super(EndDateAndTime, self).Assign(assignArgs=self.Get())

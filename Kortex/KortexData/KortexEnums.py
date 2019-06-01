@@ -18,7 +18,7 @@ class EPropertyType(Enum):
     END_DATE_AND_TIME = 4
     IMPORTANCE = 5
     MONEY_BALANCE = 6
-
+    DURATION = 7
 
 class Importance(Enum):
     TRIVIAL = 1
@@ -26,3 +26,9 @@ class Importance(Enum):
     MEDIUM = 3
     HIGH = 4
     VERY_HIGH = 5
+
+
+class ETimeInterval(Enum):
+    MINUTE = 1
+    HOUR = 2
+    DAY = 3

@@ -23,7 +23,6 @@ f3 = kortexCore.CreateEvent("Feature3")
 f4 = kortexCore.CreateEvent("Feature4")
 
 f1[KortexEnums.EPropertyType.IMAGE] = PropertyArgs(imgPath=image1)
-f1[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="31/10/2019", time="23:30")
 f1[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance=KortexEnums.Importance.HIGH)
 
 f2[KortexEnums.EPropertyType.IMAGE] = PropertyArgs(imgPath=image2)
@@ -32,10 +31,15 @@ f2[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="13/10/2019"
 
 f3[KortexEnums.EPropertyType.IMAGE] = PropertyArgs(imgPath=image3)
 f3[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="20/10/2019", time="20:00")
-f3[KortexEnums.EPropertyType.START_DATE_AND_TIME] = PropertyArgs(date="18/10/2019", time="20:00")
+f3[KortexEnums.EPropertyType.START_DATE_AND_TIME] = PropertyArgs(date="18/10/2019", time="21:30")
 
 f4[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="20/10/2019", time="21:00")
 f4[KortexEnums.EPropertyType.START_DATE_AND_TIME] = PropertyArgs(date="20/10/2019", time="10:00")
+
+f1duration = f1.GetDuration(timeUnit=KortexEnums.ETimeInterval.MINUTE)
+f2duration = f2.GetDuration(timeUnit=KortexEnums.ETimeInterval.HOUR)
+f3duration = f3.GetDuration(timeUnit=KortexEnums.ETimeInterval.DAY)
+f4duration = f4.GetDuration(timeUnit=KortexEnums.ETimeInterval.MINUTE)
 
 # Create sub events related to Feature1
 n11 = kortexCore.CreateEvent("Nested11", holdingEvent=f1)
@@ -66,4 +70,5 @@ importanceSorted = n11.GetEventList(sortBy=KortexEnums.EPropertyType.IMPORTANCE)
 # Get all events in the project
 root = kortexCore.GetEvent(name="Project")
 allEvents = root.GetEventList()
+allEventSortedDuration = root.GetEventList(sortBy=KortexEnums.EPropertyType.DURATION)
 allEventSortedDate = root.GetEventList(sortBy=KortexEnums.EPropertyType.START_DATE_AND_TIME)

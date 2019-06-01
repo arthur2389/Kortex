@@ -20,8 +20,7 @@ class EventAdapter(object):
         param: directory: holding directory of the event (Directory)
         return: new event (Event)
         """
-        # Create event object
-        event = Event(directory)
+        loadExistingEvent = True
 
         # Create directory for metadata
         repoFolder = path.join(directory.path, KortexEnums.ConstantData.projectRepoName)
@@ -33,7 +32,13 @@ class EventAdapter(object):
         # In case the event is new, create the metadata file
         if not path.exists(eventDataFile):
             JsonIO.CreateEmptyFile(eventDataFile)
-        # In case the event already exists from previous activations
-        else:
+            loadExistingEvent = False
+
+        # Create event object
+        event = Event(directory)
+
+        # In case the event already exists from previous activations, load the properties
+        if loadExistingEvent:
             event.LoadProperties()
+
         return event
