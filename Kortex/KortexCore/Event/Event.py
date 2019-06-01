@@ -18,7 +18,8 @@ class Event(object):
         self._propObjs = {EPropertyType.DESCRIPTION: EventProperties.Description(self._dir.path),
                           EPropertyType.IMAGE: EventProperties.Image(self._dir.path),
                           EPropertyType.IMPORTANCE: EventProperties.Importance(self._dir.path),
-                          EPropertyType.DATE_AND_TIME: EventProperties.DateAndTime(self._dir.path),
+                          EPropertyType.START_DATE_AND_TIME: EventProperties.StartDateAndTime(self._dir.path),
+                          EPropertyType.END_DATE_AND_TIME: EventProperties.EndDateAndTime(self._dir.path),
                           EPropertyType.MONEY_BALANCE: EventProperties.MoneyBalance(self._dir.path)}
 
     def LoadProperties(self):
@@ -68,7 +69,7 @@ class Event(object):
         param: propName: property name (KortexEnums.EProperty)
         param propArgs: generic data object for setting a property (KortexKoreInterface.PropertyArgs)
         """
-        self._propObjs[propName].Assign(propArgs)
+        self._propObjs[propName].Assign(assignArgs=propArgs, event=self)
 
     def GetEventList(self, sortBy=None):
         """
@@ -76,14 +77,11 @@ class Event(object):
         param sortBy: property to sort by or None for not sorted list (KortexEnums.EProperty/None)
         return: sorted event list (list <Event>)
         """
-        def _sort(event, sortProperty):
-            return int(event.GetProperty(sortProperty))
-
         dirList = []
         self._dir.GetAllDirectories(dirList)
         eventList = [_dir.GetEvent() for _dir in dirList]
         if sortBy:
-            eventList.sort(key=lambda event: _sort(event, sortBy))
+            eventList.sort(key=lambda event: int(event.GetProperty(sortBy)))
         return eventList
 
     def __repr__(self):

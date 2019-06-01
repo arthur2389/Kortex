@@ -1,5 +1,6 @@
 import abc
 from os import path
+import datetime
 
 from Kortex.KortexCore.File.FunctionalFile import FuncrionalFile as FuncrionalFile
 from Kortex.KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
@@ -25,7 +26,7 @@ class PropertyBase(object):
         pass
 
     @abc.abstractmethod
-    def Assign(self, *args, **kwargs):
+    def Assign(self, assignArgs, **kwargs):
         """
         Assign new value to the property
         """
@@ -72,12 +73,12 @@ class FileBasedProperty(PropertyBase):
                                             holdingDir=None)
                 break
 
-    def Assign(self, filePath):
+    def Assign(self, assignArgs, **kwargs):
         """
         param: filePath: assign new file to property by copying and replacing the old file
         """
-        self._file = FuncrionalFile(name=path.basename(filePath),
-                                    dirname=path.dirname(filePath),
+        self._file = FuncrionalFile(name=path.basename(assignArgs),
+                                    dirname=path.dirname(assignArgs),
                                     level=0,
                                     holdingDir=None)
         if self._file.suffix not in self.__class__.suffixes:
@@ -86,7 +87,7 @@ class FileBasedProperty(PropertyBase):
 
     def Get(self):
         """
-        Returns the full path of the file
+        Returns the full path of the file__
         return: file full path (str) or None the is no file
         """
         return self._file.path if self._file else None
@@ -99,8 +100,8 @@ class Image(FileBasedProperty):
     """
     suffixes = [".jpg", ".png", ".gif", ".svg"]
 
-    def Assign(self, propArgs):
-        super(Image, self).Assign(propArgs.imgPath)
+    def Assign(self, assignArgs, **kwargs):
+        super(Image, self).Assign(assignArgs=assignArgs.imgPath)
 
 
 class DescriptionProperty(PropertyBase):
@@ -122,12 +123,12 @@ class DescriptionProperty(PropertyBase):
         if self.__class__.__name__ in data.keys():
             self._setDesc(data[self.__class__.__name__])
 
-    def Assign(self, desc):
+    def Assign(self, assignArgs, **kwargs):
         """
         Write a new description to metadata file
         param: desc: description to write (str)
         """
-        JsonIO.Write(filePath=self._dataFilePath, field=self.__class__.__name__, data=desc)
+        JsonIO.Write(filePath=self._dataFilePath, field=self.__class__.__name__, data=assignArgs)
 
     @abc.abstractmethod
     def _setDesc(self, descStr):
@@ -147,13 +148,13 @@ class Description(DescriptionProperty):
         super(Description, self).__init__(dirPath)
         self._description = None
 
-    def Assign(self, propArgs):
+    def Assign(self, assignArgs, **kwargs):
         """
         Assign new description
         param: propArgs: argument object that holds description field (KortexKoreInterface.PropertyArgs)
         """
-        self._desc = propArgs.description
-        super(Description, self).Assign(propArgs.description)
+        self._desc = assignArgs.description
+        super(Description, self).Assign(assignArgs=assignArgs.description)
 
     def Get(self):
         """
@@ -194,15 +195,15 @@ class Importance(QuantifiableProperty):
         super(Importance, self).__init__(dirPath)
         self._importance = KortexEnums.Importance.TRIVIAL
 
-    def Assign(self, propArgs):
+    def Assign(self, assignArgs, **kwargs):
         """
         Assign new importance value
         param: propArgs: argument object that holds importance field (KortexKoreInterface.PropertyArgs)
         """
-        if not isinstance(propArgs.importance, KortexEnums.Importance):
+        if not isinstance(assignArgs.importance, KortexEnums.Importance):
             raise TypeError
-        self._importance = propArgs.importance
-        super(Importance, self).Assign(propArgs.importance.name)
+        self._importance = assignArgs.importance
+        super(Importance, self).Assign(assignArgs=assignArgs.importance.name)
 
     def Get(self):
         """
@@ -243,13 +244,13 @@ class MoneyBalance(QuantifiableProperty):
         super(MoneyBalance, self).__init__(dirPath)
         self._moneyBalance = 0
 
-    def Assign(self, propArgs):
+    def Assign(self, assignArgs, **kwargs):
         """
         Assign new money balance value
         param: propArgs: argument object that holds moneyBalance field (KortexKoreInterface.PropertyArgs)
         """
-        self._moneyBalance = int(propArgs.moneyBalance)
-        super(MoneyBalance, self).Assign(propArgs.moneyBalance)
+        self._moneyBalance = int(assignArgs.moneyBalance)
+        super(MoneyBalance, self).Assign(assignArgs=assignArgs.moneyBalance)
 
     def Get(self):
         """
@@ -290,7 +291,7 @@ class DateAndTime(QuantifiableProperty):
         daysInMonth = 30
         daysInYear = 365
 
-        def __init__(self, year=2010, month=1, day=1):
+        def __init__(self, year, month, day):
             """
             Initiate new date. Default is 1.1.2010
             param: year: year must be > 0 (int)
@@ -353,7 +354,7 @@ class DateAndTime(QuantifiableProperty):
 
         minutesInHours = 60
 
-        def __init__(self, hours=0, minutes=0):
+        def __init__(self, hours, minutes):
             """
             Initiate new time. Default is 00:00
             param: hours: hours must be 23 > h > 0 (int)
@@ -408,16 +409,9 @@ class DateAndTime(QuantifiableProperty):
         Initialize date and time by default values
         """
         super(DateAndTime, self).__init__(dirPath)
-        self._date = DateAndTime.Date()
-        self._time = DateAndTime.Time()
-
-    def Assign(self, propArgs):
-        """
-        Assign new date and  time value
-        param: propArgs: argument object that holds date and time fields (KortexKoreInterface.PropertyArgs)
-        """
-        self._setDateTime(propArgs.date, propArgs.time)
-        super(DateAndTime, self).Assign(self.Get())
+        self._date = None
+        self._time = None
+        self._dateAndTimeSet = False
 
     def Get(self):
         """
@@ -433,6 +427,8 @@ class DateAndTime(QuantifiableProperty):
         Cast data and time to integer by summing the total number of minutes
         return: total number of minutes (int)
         """
+        if not self._date or not self._time:
+            return 0
         return int(self._time) + int(self._date) * self.__class__.minutesInDay
 
     def _setDesc(self, descStr):
@@ -475,3 +471,37 @@ class DateAndTime(QuantifiableProperty):
         self._date = DateAndTime.Date(day=day, month=month, year=year)
         hours, minutes = self._parseTime(time)
         self._time = DateAndTime.Time(hours=hours, minutes=minutes)
+        self._dateAndTimeSet = True
+
+
+class StartDateAndTime(DateAndTime):
+    
+    def __init__(self, dirPath):
+        super(StartDateAndTime, self).__init__(dirPath)
+        now = datetime.datetime.now()
+        self._setDateTime(date=now.strftime("%d/%m/%Y"), time=now.strftime("%H:%M"))
+
+    def Assign(self, assignArgs, event, **kwargs):
+        """
+        Assign new start date and  time value for the event
+        param: propArgs: argument object that holds date and time fields (KortexKoreInterface.PropertyArgs)
+        """
+        endDateAndTime = event.GetProperty(KortexEnums.EPropertyType.END_DATE_AND_TIME)
+        self._setDateTime(assignArgs.date, assignArgs.time)
+        if endDateAndTime._dateAndTimeSet and int(endDateAndTime) < int(self):
+            raise NotImplementedError
+        super(DateAndTime, self).Assign(assignArgs=self.Get())
+
+
+class EndDateAndTime(DateAndTime):
+
+    def Assign(self, assignArgs, event, **kwargs):
+        """
+        Assign new end date and  time value for the event
+        param: propArgs: argument object that holds date and time fields (KortexKoreInterface.PropertyArgs)
+        """
+        startDateAndTime = event.GetProperty(KortexEnums.EPropertyType.START_DATE_AND_TIME)
+        self._setDateTime(assignArgs.date, assignArgs.time)
+        if int(startDateAndTime) > int(self):
+            raise NotImplementedError
+        super(DateAndTime, self).Assign(assignArgs=self.Get())

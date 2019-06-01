@@ -1,6 +1,5 @@
 from os import path
 from Kortex.KortexCore.File.FileFactrory import FileFactory as FileFactory
-from Kortex.KortexCore.Event.EventAdapter import EventAdapter as EventAdapter
 
 
 class KortexCoreInterface(object):
@@ -16,7 +15,6 @@ class KortexCoreInterface(object):
         """
 
         # Create main utils and initialize the project
-        self._eventAdapter = EventAdapter()
         self._fileFactory = FileFactory()
         self._project = self._fileFactory.GenerateDirectory(rootdir)
 

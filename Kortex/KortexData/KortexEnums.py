@@ -14,9 +14,10 @@ class EFileType(Enum):
 class EPropertyType(Enum):
     IMAGE = 1
     DESCRIPTION = 2
-    DATE_AND_TIME = 3
-    IMPORTANCE = 4
-    MONEY_BALANCE = 5
+    START_DATE_AND_TIME = 3
+    END_DATE_AND_TIME = 4
+    IMPORTANCE = 5
+    MONEY_BALANCE = 6
 
 
 class Importance(Enum):
