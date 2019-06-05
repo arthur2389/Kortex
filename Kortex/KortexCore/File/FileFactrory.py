@@ -26,7 +26,10 @@ class FileFactory(object):
         return: created functional file object (FunctionalFile)
         """
         assert path.isfile(pathFile)
-        return FunctionalFile(name=pathFile.basename(pathFile), level=level, holdingDir=holdingDir)
+        return FunctionalFile(name=path.basename(pathFile),
+                              level=level,
+                              holdingDir=holdingDir,
+                              dirname=path.dirname(pathFile))
 
     def GenerateDirectory(self, pathFile, level=0, holdingDir=None):
         """

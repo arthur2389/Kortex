@@ -23,44 +23,45 @@ class Directory(File):
         param event: event held in the directory (Event)
         """
         super(Directory, self).__init__(name=name, dirname=dirname, level=level, holdingDir=holdingDir)
-        self._fileList = {EFileType.DIRECTORY: [],
-                          EFileType.FUNCTIONAL_FILE: []}
+        self._fileList = {EFileType.DIRECTORY: {},
+                          EFileType.FUNCTIONAL_FILE: {}}
         self._event = event
 
     @property
-    def allfiles(self):
-        """
-        return: All files that are directly under the directory (list <File>)
-        """
-        return self._fileList[EFileType.FUNCTIONAL_FILE] + self._fileList[EFileType.DIRECTORY]
+    def functionalfiles(self):
+        return self._fileList[EFileType.FUNCTIONAL_FILE]
+
+    @property
+    def directories(self):
+        return self._fileList[EFileType.DIRECTORY]
 
     def AddFunctionalFile(self, file):
         """
         Add file to the list of files that are directly under the directory
         param: file: file to add (FunctionalFile)
         """
-        self._fileList[EFileType.FUNCTIONAL_FILE].append(file)
+        self._fileList[EFileType.FUNCTIONAL_FILE][file.name] = file
 
     def AddDirectory(self, file):
         """
         Add directory to the list of directories that are directly under the directory
         param: file: directory to add (Directory)
         """
-        self._fileList[EFileType.DIRECTORY].append(file)
+        self._fileList[EFileType.DIRECTORY][file.name] = file
 
     def RemoveFunctionalFile(self, file):
         """
         Remove file from the list of files that are directly under the directory
         param: file: file to remove (FunctionalFile)
         """
-        self._fileList[EFileType.FUNCTIONAL_FILE].remove(file)
+        del self._fileList[EFileType.FUNCTIONAL_FILE][file.name]
 
     def RemoveDirectory(self, file):
         """
         Remove directory from the list of directories that are directly under the directory
         param: file: directory to remove (Directory)
         """
-        self._fileList[EFileType.DIRECTORY].remove(file)
+        del self._fileList[EFileType.DIRECTORY][file.name]
 
     def Remove(self):
         """
@@ -99,17 +100,6 @@ class Directory(File):
         targetDir.AddDirectory(self)
         self._holdingDir = targetDir
 
-    def GetFunctionalFile(self, fileName):
-        """
-        Find functional file in directory by name
-        param: fileName: name of the file (str)
-        return: file (File) if found otherwise None
-        """
-        for file in self._fileList[EFileType.FUNCTIONAL_FILE]:
-            if file.name == fileName:
-                return file
-        return None
-
     def FindDirectory(self, name, getEvent=False):
         """
         Find directory by name
@@ -119,7 +109,7 @@ class Directory(File):
         """
         if self._name == name:
             return self._event if getEvent else self
-        for file in self._fileList[EFileType.DIRECTORY]:
+        for file in self._fileList[EFileType.DIRECTORY].values():
             foundObj =  file.FindDirectory(name, getEvent)
             if foundObj is not None:
                 return foundObj
@@ -131,7 +121,7 @@ class Directory(File):
         held) in the directory
         param: dirList: the list to be filled with directories (list <Directory>)
         """
-        for file in self._fileList[EFileType.DIRECTORY]:
+        for file in self._fileList[EFileType.DIRECTORY].values():
             dirList.append(file)
             file.GetAllDirectories(dirList)
 
@@ -153,6 +143,10 @@ class Directory(File):
         """
         super(Directory, self).__str__()
         name = self._tabs + "<< " + self._name + " >>\n"
-        for file in self.allfiles:
-            name += str(file)
+        name += self._tabs + "Functional Files: "
+        for filenaame, file in self.functionalfiles.items():
+            name += str(file) + " "
+        name += "\n"
+        for _dirname, _dir in self.directories.items():
+            name += str(_dir)
         return name

@@ -86,5 +86,5 @@ class FuncrionalFile(File):
         Debug procedure that prints the file name
         """
         super(FuncrionalFile, self).__str__()
-        return self._tabs + self._name + "\n"
+        return self._tabs + self._name
 

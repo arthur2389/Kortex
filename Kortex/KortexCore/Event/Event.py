@@ -14,7 +14,6 @@ class Event(object):
                         ETimeInterval.HOUR: EventProperties.DateAndTime.Time.minutesInHours,
                         ETimeInterval.DAY: EventProperties.DateAndTime.minutesInDay}
 
-
     def __init__(self, directory, fileFactory):
         """
         Initialize event object with default properties and a holding directory
@@ -28,6 +27,10 @@ class Event(object):
                           EPropertyType.END_DATE_AND_TIME: EventProperties.EndDateAndTime(self._dir.path),
                           EPropertyType.MONEY_BALANCE: EventProperties.MoneyBalance(self._dir.path)}
         self._fileFactory = fileFactory
+
+    @property
+    def files(self):
+        return self._dir.functionalfiles
 
     def LoadProperties(self):
         """
@@ -105,14 +108,15 @@ class Event(object):
         timeBetweenStartAndEnd = int(endDate) - int(startDate)
         return float(timeBetweenStartAndEnd/self.__class__.minuteToTimeUnit[timeUnit])
 
-    def ImportFile(self, path=None):
-        file = self._fileFactory.GenerateFunctionalFile(pathFile=path)
-        file.Copy(targetDirObj=self._dir)
+    def ImportFile(self, path=None, newName=None):
+        """
+        """
+        file = self._fileFactory.GenerateFunctionalFile(pathFile=path, level=self._dir._level)
+        file.Copy(targetDirObj=self._dir, newName=newName)
 
-    def MoveFile(self, fileName, newEvent, eraseCurrent=True, newName=None):
-        file = self._dir.GetFunctionalFile(fileName)
-        if not file:
-            raise FileNotFoundError
+    def MoveFile(self, file, newEvent, eraseCurrent=True, newName=None):
+        """
+        """
         if eraseCurrent:
             file.Move(targetDir=newEvent.GetDirectory(), newName=newName)
         else:

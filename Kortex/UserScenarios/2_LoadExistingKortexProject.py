@@ -64,3 +64,4 @@ kortexCore.MoveEvent(n14, root)
 # Get all events in the project
 allEvents = root.GetEventList()
 allEventSortedDate = root.GetEventList(sortBy=KortexEnums.EPropertyType.START_DATE_AND_TIME)
+kortexCore.PrintProjectTree()
