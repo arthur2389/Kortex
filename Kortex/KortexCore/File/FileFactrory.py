@@ -1,11 +1,12 @@
 from os import path, listdir, makedirs
+from Kortex.KortexCore.CommonUtils.Singleton import singleton as singleton
 
 from Kortex.KortexCore.File.Directory import Directory as Directory
 from Kortex.KortexCore.File.FunctionalFile import FuncrionalFile as FunctionalFile
 from Kortex.KortexCore.Event.EventAdapter import EventAdapter as EventAdapter
 import Kortex.KortexData.KortexEnums as KortexEnums
 
-
+@singleton
 class FileFactory(object):
 
     """
@@ -25,8 +26,7 @@ class FileFactory(object):
         return: created functional file object (FunctionalFile)
         """
         assert path.isfile(pathFile)
-        filename, fileDirname = self._getFileAndDirName(pathFile=pathFile)
-        return FunctionalFile(filename, fileDirname, level, holdingDir)
+        return FunctionalFile(name=pathFile.basename(pathFile), level=level, holdingDir=holdingDir)
 
     def GenerateDirectory(self, pathFile, level=0, holdingDir=None):
         """
@@ -43,9 +43,8 @@ class FileFactory(object):
             makedirs(pathFile)
 
         # Create directory object, create an event and pair them
-        filename, fileDirname = self._getFileAndDirName(pathFile=pathFile)
-        _dir = Directory(filename, fileDirname, level, holdingDir)
-        event = self._eventAdapter.GetEvent(_dir)
+        _dir = Directory(name=path.basename(pathFile), dirname=path.dirname(pathFile), level=level, holdingDir=holdingDir)
+        event = self._eventAdapter.GetEvent(_dir, self)
         _dir.SetEvent(event)
 
         # Map all nested directories in the created directory, and remove metadata directory
@@ -63,9 +62,3 @@ class FileFactory(object):
                 fileObj = self.GenerateFunctionalFile(fullPath, level + 1, _dir)
                 _dir.AddFunctionalFile(fileObj)
         return _dir
-
-    def _getFileAndDirName(self, pathFile):
-        """
-        Retruns basename and dir name out of the full path
-        """
-        return path.basename(pathFile), path.dirname(pathFile)

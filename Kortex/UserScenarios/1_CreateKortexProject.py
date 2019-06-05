@@ -7,9 +7,9 @@ import Kortex.KortexData.KortexEnums as KortexEnums
 
 TEST_ROOT_DIR = path.dirname(sys.modules['__main__'].__file__)
 
-image1 = "TestFiles\\image1.jpg"
-image2 = "TestFiles\\image2.jpg"
-image3 = "TestFiles\\image3.jpg"
+image1 = path.join(TEST_ROOT_DIR, "TestFiles/image1.jpg")
+image2 = path.join(TEST_ROOT_DIR, "TestFiles/image2.jpg")
+image3 = path.join(TEST_ROOT_DIR, "TestFiles/image3.jpg")
 projectName = "Project"
 
 rootDir = input("Set your kortex project root directory: ")

@@ -13,7 +13,7 @@ class Directory(File):
     the file system - holding and looking up other directories and files, as well as move and
     remove procedures.
     """
-    def __init__(self, name, dirname, level, holdingDir, event=None):
+    def __init__(self, name, level, dirname=None, holdingDir=None, event=None):
         """
         Initialize Directory object
         param: name: last name of directory (str)
@@ -75,7 +75,7 @@ class Directory(File):
         rmtree(self.path)
         del self
 
-    def Move(self, targetDir):
+    def Move(self, targetDir, newName=None):
         """
         Move the current directory to a new directory in the project. This will practically move
         the event held by it to new holding event. The target directory cannot be nested in the
@@ -99,17 +99,14 @@ class Directory(File):
         targetDir.AddDirectory(self)
         self._holdingDir = targetDir
 
-    def GetFile(self, filePath):
+    def GetFunctionalFile(self, fileName):
         """
-        Find file by full path
-        param: filePath: full path to the file (str)
+        Find functional file in directory by name
+        param: fileName: name of the file (str)
         return: file (File) if found otherwise None
         """
-        if self.path == filePath:
-            return self
-        for file in self._fileList[EFileType.DIRECTORY]:
-            file = file.GetFile(filePath)
-            if file != None:
+        for file in self._fileList[EFileType.FUNCTIONAL_FILE]:
+            if file.name == fileName:
                 return file
         return None
 

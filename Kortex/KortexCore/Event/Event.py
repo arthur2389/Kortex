@@ -15,7 +15,7 @@ class Event(object):
                         ETimeInterval.DAY: EventProperties.DateAndTime.minutesInDay}
 
 
-    def __init__(self, directory):
+    def __init__(self, directory, fileFactory):
         """
         Initialize event object with default properties and a holding directory
         param: directory: the directory of the event (Directory)
@@ -27,6 +27,7 @@ class Event(object):
                           EPropertyType.START_DATE_AND_TIME: EventProperties.StartDateAndTime(self._dir.path),
                           EPropertyType.END_DATE_AND_TIME: EventProperties.EndDateAndTime(self._dir.path),
                           EPropertyType.MONEY_BALANCE: EventProperties.MoneyBalance(self._dir.path)}
+        self._fileFactory = fileFactory
 
     def LoadProperties(self):
         """
@@ -96,18 +97,30 @@ class Event(object):
 
     def GetDuration(self, timeUnit):
         """
-        param timeUnit:
-        :return:
         """
         startDate, endDate =\
             self._propObjs[EPropertyType.START_DATE_AND_TIME], self._propObjs[EPropertyType.END_DATE_AND_TIME]
         if not endDate.isset:
             return float(0)
         timeBetweenStartAndEnd = int(endDate) - int(startDate)
-        return float(timeBetweenStartAndEnd)/float(self.__class__.minuteToTimeUnit[timeUnit])
+        return float(timeBetweenStartAndEnd/self.__class__.minuteToTimeUnit[timeUnit])
+
+    def ImportFile(self, path=None):
+        file = self._fileFactory.GenerateFunctionalFile(pathFile=path)
+        file.Copy(targetDirObj=self._dir)
+
+    def MoveFile(self, fileName, newEvent, eraseCurrent=True, newName=None):
+        file = self._dir.GetFunctionalFile(fileName)
+        if not file:
+            raise FileNotFoundError
+        if eraseCurrent:
+            file.Move(targetDir=newEvent.GetDirectory(), newName=newName)
+        else:
+            file.Copy(targetDir=newEvent.GetDirectory(), newName=newName)
+        return file
 
     def __repr__(self):
         """
-        Debug method that prints thet name of the property
+        Debug method that prints the name of the property
         """
         return "Event << " + self.GetName() + " >>"

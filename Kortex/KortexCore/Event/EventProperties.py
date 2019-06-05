@@ -78,16 +78,14 @@ class FileBasedProperty(PropertyBase):
         param: filePath: assign new file to property by copying and replacing the old file
         """
         self._file = FuncrionalFile(name=path.basename(assignArgs),
-                                    dirname=path.dirname(assignArgs),
-                                    level=0,
-                                    holdingDir=None)
+                                    dirname=path.dirname(assignArgs))
         if self._file.suffix not in self.__class__.suffixes:
             raise FileNotFoundError
-        self._file.CopyFile(dest=self._path, newName=self.__class__.__name__)
+        self._file.Copy(targetDirPath=self._path, newName=self.__class__.__name__)
 
     def Get(self):
         """
-        Returns the full path of the file__
+        Returns the full path of the file
         return: file full path (str) or None the is no file
         """
         return self._file.path if self._file else None

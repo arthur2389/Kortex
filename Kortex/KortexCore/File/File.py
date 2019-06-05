@@ -1,5 +1,4 @@
 import abc
-from shutil import copy
 from os import path
 
 
@@ -10,11 +9,11 @@ class File(object):
     """
     __mettaclass__ = abc.ABCMeta
 
-    def __init__(self, name, dirname, level, holdingDir):
+    def __init__(self, name, level, holdingDir, dirname):
         self._name = name
-        self._dirname = dirname
         self._level = level
         self._holdingDir = holdingDir
+        self._dirname = dirname
         self._path = None
 
     @property
@@ -23,6 +22,10 @@ class File(object):
         return: file last name (str)
         """
         return self._name
+
+    @name.setter
+    def name(self, newName):
+        self._name = newName
 
     @property
     def level(self):
@@ -36,17 +39,14 @@ class File(object):
         """
         Full file path
         """
-        self._path = path.join(self._dirname, self._name)
+        if self._holdingDir:
+            dirPath = self._holdingDir.path
+        elif self._dirname:
+            dirPath = self._dirname
+        else:
+            raise NotImplementedError
+        self._path = path.join(dirPath, self._name)
         return self._path
-
-    def CopyFile(self, dest):
-        """
-        Copy file to new destination (old reference to the file remains)
-        param: dest: new pull file path (str)
-        """
-        if not path.isdir(dest):
-            raise ValueError
-        copy(self.path, dest)
 
     @abc.abstractmethod
     def Remove(self):
@@ -56,10 +56,16 @@ class File(object):
         pass
 
     @abc.abstractmethod
-    def Move(self, targetDir):
+    def Move(self, targetDir, newName=None):
         """
         Abstract method to move a file to ew directory (old reference to the file is deleted
-        param: targetDir: directory to move the file to (Directory)
+        """
+        pass
+
+    @abc.abstractmethod
+    def Copy(self, targetDirObj=None, targetDirPath=None, newName=None):
+        """
+        Copy file to new destination (old reference to the file remains)
         """
         pass
 

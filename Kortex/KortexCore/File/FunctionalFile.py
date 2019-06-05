@@ -1,4 +1,4 @@
-from shutil import move
+from shutil import move, copyfile
 from os import path, remove
 
 from Kortex.KortexCore.File.File import File as File
@@ -10,7 +10,7 @@ class FuncrionalFile(File):
     FuncrionalFile object stand for one functional file in Kortex project file system. Functional file can
     the text, presentation, image file etc.
     """
-    def __init__(self, name, dirname, level, holdingDir):
+    def __init__(self, name, level=0, holdingDir=None, dirname=None):
         """
         Initialize FunctionalFile object
         param: name: last name of directory (str)
@@ -29,23 +29,6 @@ class FuncrionalFile(File):
         """
         return self._suffix
 
-    def CopyFile(self, dest, newName=None):
-        """
-        Copy functional file, possibly assign new name for it.
-        param: dest: Full path destination for the file (str)
-        param: newName: new name for the file (None/str)
-        """
-        super(FuncrionalFile, self).CopyFile(dest=dest)
-        if not newName:
-            return
-        assert isinstance(newName, str)
-        newName = newName + self._suffix
-
-        move(path.join(dest, self._name), path.join(dest, newName))
-
-        self._dirname = dest
-        self._name = newName
-
     def Remove(self):
         """
         Remove functional file from the Kortex project
@@ -59,22 +42,44 @@ class FuncrionalFile(File):
         remove(self.path)
         del self
 
-    def Move(self, targetDir):
+    def Move(self, targetDir, newName=None):
         """
         Move the current file to a new directory in the project.
         param: targetDir: directory to move to (Directory)
         """
-
-        # Remove the object from the list of directories in the holding directory
+        # Remove the object from the list of functional files in the holding directory
         if self._holdingDir:
             self._holdingDir.RemoveFunctionalFile(self)
 
-        # Move the file to new directory in file system
-        move(self.path, path.join(targetDir.path, self.name))
+        self._changeNameAndReplace(method=copyfile, newName=newName, targetDirPath=targetDir.path)
 
         # Update the file and the holding directory
         targetDir.AddFunctionalFile(self)
         self._holdingDir = targetDir
+
+    def Copy(self, targetDirObj=None, targetDirPath=None, newName=None):
+        """
+        Copy functional file, possibly assign new name for it.
+        param: targetDir: Full path destination for the file (str)
+        param: newName: new name for the file (None/str)
+        """
+        if not targetDirObj and not targetDirPath:
+            raise NotImplementedError
+
+        if targetDirObj:
+            self._changeNameAndReplace(method=copyfile, newName=newName, targetDirPath=targetDirObj.path)
+
+            # Update the file and the holding directory
+            targetDirObj.AddFunctionalFile(self)
+            self._holdingDir = targetDirObj
+        else:
+            self._changeNameAndReplace(method=copyfile, newName=newName, targetDirPath=targetDirPath)
+
+    def _changeNameAndReplace(self, method, newName, targetDirPath):
+        oldPath = self.path
+        if newName:
+            self.name = newName + self._suffix
+        method(oldPath, path.join(targetDirPath, self.name))
 
     def __str__(self):
         """

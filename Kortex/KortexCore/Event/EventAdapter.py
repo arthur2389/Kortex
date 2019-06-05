@@ -12,7 +12,7 @@ class EventAdapter(object):
     Adapter between Event and File. Also stand for factory for events
     """
 
-    def GetEvent(self, directory):
+    def GetEvent(self, directory, fileFactory):
         """
         Creates new event and creates .kor metadata folder, as well as metadata file
         for the event if needed.
@@ -35,7 +35,7 @@ class EventAdapter(object):
             loadExistingEvent = False
 
         # Create event object
-        event = Event(directory)
+        event = Event(directory, fileFactory)
 
         # In case the event already exists from previous activations, load the properties
         if loadExistingEvent:
