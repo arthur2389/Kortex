@@ -1,5 +1,5 @@
 from shutil import move, copyfile
-from os import path, remove
+from os import path, remove, startfile
 
 from Kortex.KortexCore.File.File import File as File
 
@@ -7,9 +7,12 @@ from Kortex.KortexCore.File.File import File as File
 class FuncrionalFile(File):
 
     """
-    FuncrionalFile object stand for one functional file in Kortex project file system. Functional file can
+    FunctionalFile object stand for one functional file in Kortex project file system. Functional file can
     the text, presentation, image file etc.
     """
+
+    addMe = "AddFunctionalFile"
+
     def __init__(self, name, level=0, holdingDir=None, dirname=None):
         """
         Initialize FunctionalFile object
@@ -51,11 +54,10 @@ class FuncrionalFile(File):
         if self._holdingDir:
             self._holdingDir.RemoveFunctionalFile(self)
 
-        self._changeNameAndReplace(method=copyfile, newName=newName, targetDirPath=targetDir.path)
+        self._changeNameAndReplace(method=move, newName=newName, targetDirPath=targetDir.path)
 
         # Update the file and the holding directory
-        targetDir.AddFunctionalFile(self)
-        self._holdingDir = targetDir
+        self._UpdateHoldingDirectory(targetDir=targetDir)
 
     def Copy(self, targetDirObj=None, targetDirPath=None, newName=None):
         """
@@ -70,10 +72,15 @@ class FuncrionalFile(File):
             self._changeNameAndReplace(method=copyfile, newName=newName, targetDirPath=targetDirObj.path)
 
             # Update the file and the holding directory
-            targetDirObj.AddFunctionalFile(self)
-            self._holdingDir = targetDirObj
+            self._UpdateHoldingDirectory(targetDir=targetDirObj)
         else:
             self._changeNameAndReplace(method=copyfile, newName=newName, targetDirPath=targetDirPath)
+
+    def Open(self):
+        """
+        Open a functional file with it's default application
+        """
+        startfile(self.path)
 
     def _changeNameAndReplace(self, method, newName, targetDirPath):
         oldPath = self.path
@@ -86,5 +93,5 @@ class FuncrionalFile(File):
         Debug procedure that prints the file name
         """
         super(FuncrionalFile, self).__str__()
-        return self._tabs + self._name
+        return self._name
 

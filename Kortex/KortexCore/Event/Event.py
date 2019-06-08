@@ -32,6 +32,10 @@ class Event(object):
     def files(self):
         return self._dir.functionalfiles
 
+    @property
+    def events(self):
+        return self._dir.directories
+
     def LoadProperties(self):
         """
         Load existing properties from metadata file
@@ -122,6 +126,16 @@ class Event(object):
         else:
             file.Copy(targetDir=newEvent.GetDirectory(), newName=newName)
         return file
+
+    def OpenFile(self, file):
+        """
+        """
+        file.Open()
+
+    def OpenEventLocation(self):
+        """
+        """
+        self._dir.Open()
 
     def __repr__(self):
         """

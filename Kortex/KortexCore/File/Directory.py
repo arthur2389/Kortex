@@ -1,5 +1,6 @@
 from shutil import rmtree, move
 from os import path
+import subprocess
 
 from Kortex.KortexCore.File.File import File as File
 from Kortex.KortexData.KortexEnums import EFileType as EFileType
@@ -13,6 +14,9 @@ class Directory(File):
     the file system - holding and looking up other directories and files, as well as move and
     remove procedures.
     """
+
+    addMe = "AddDirectory"
+
     def __init__(self, name, level, dirname=None, holdingDir=None, event=None):
         """
         Initialize Directory object
@@ -97,8 +101,13 @@ class Directory(File):
         move(self.path, path.join(targetDir.path, self.name))
 
         # Update the directory and the holding directory
-        targetDir.AddDirectory(self)
-        self._holdingDir = targetDir
+        self._UpdateHoldingDirectory(targetDir=targetDir)
+
+    def Open(self):
+        """
+        Open the directory location in file explorer
+        """
+        subprocess.call("explorer " + self._path)
 
     def FindDirectory(self, name, getEvent=False):
         """
@@ -142,11 +151,12 @@ class Directory(File):
         Debug procedure - print the directory tree
         """
         super(Directory, self).__str__()
-        name = self._tabs + "<< " + self._name + " >>\n"
-        name += self._tabs + "Functional Files: "
-        for filenaame, file in self.functionalfiles.items():
-            name += str(file) + " "
-        name += "\n"
-        for _dirname, _dir in self.directories.items():
+        name = self._tabs + "<< " + self._name + " >>  "
+        fileList = "["
+        for _, file in self.functionalfiles.items():
+            fileList += " " + str(file) + " "
+        fileList += "]\n"
+        name += fileList
+        for _, _dir in self.directories.items():
             name += str(_dir)
         return name

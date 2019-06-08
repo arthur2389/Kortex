@@ -9,6 +9,8 @@ class File(object):
     """
     __mettaclass__ = abc.ABCMeta
 
+    addMe = ""
+
     def __init__(self, name, level, holdingDir, dirname):
         self._name = name
         self._level = level
@@ -68,6 +70,18 @@ class File(object):
         Copy file to new destination (old reference to the file remains)
         """
         pass
+
+    @abc.abstractmethod
+    def Open(self):
+        """
+        Open a file
+        """
+        pass
+
+    def _UpdateHoldingDirectory(self, targetDir):
+        getattr(targetDir, self.__class__.addMe)(self)
+        self._holdingDir = targetDir
+        self._level = self._holdingDir._level + 1
 
     def __str__(self):
         self._tabs = "\t" * self._level
