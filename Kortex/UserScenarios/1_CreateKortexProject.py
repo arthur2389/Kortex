@@ -5,6 +5,7 @@ from Kortex.KortexCoreInterface.KortexCoreInterface import KortexCoreInterface a
 from Kortex.KortexCoreInterface.KortexCoreInterface import PropertyArgs as PropertyArgs
 import Kortex.KortexData.KortexEnums as KortexEnums
 
+
 TEST_ROOT_DIR = path.dirname(sys.modules['__main__'].__file__)
 
 image1 = path.join(TEST_ROOT_DIR, "TestFiles/image1.jpg")
