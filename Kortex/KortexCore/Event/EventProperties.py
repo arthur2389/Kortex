@@ -2,7 +2,7 @@ import abc
 from os import path
 import datetime
 
-from Kortex.KortexCore.File.FunctionalFile import FuncrionalFile as FuncrionalFile
+from Kortex.KortexCore.File.FunctionalFile import FunctionalFile as FunctionalFile
 from Kortex.KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
 import Kortex.KortexData.KortexEnums as KortexEnums
 
@@ -67,7 +67,7 @@ class FileBasedProperty(PropertyBase):
         """
         for suffix in self.__class__.suffixes:
             if path.exists(path.join(self._path, self.__class__.__name__ + suffix)):
-                self._file = FuncrionalFile(name=self.__class__.__name__ + suffix,
+                self._file = FunctionalFile(name=self.__class__.__name__ + suffix,
                                             dir_name=self._path,
                                             level=0,
                                             holding_dir=None)
@@ -77,7 +77,7 @@ class FileBasedProperty(PropertyBase):
         """
         param: filePath: assign new file to property by copying and replacing the old file
         """
-        self._file = FuncrionalFile(name=path.basename(assign_args),
+        self._file = FunctionalFile(name=path.basename(assign_args),
                                     dir_name=path.dirname(assign_args))
         if self._file.suffix not in self.__class__.suffixes:
             raise FileNotFoundError

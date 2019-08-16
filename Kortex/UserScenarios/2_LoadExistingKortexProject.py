@@ -62,6 +62,6 @@ kortex_core.move_event(n14, root)
 
 
 # Get all events in the project
-all_events = root.GetEventList()
+all_events = root.get_event_list()
 all_event_sorted_date = root.get_event_list(sort_by=KortexEnums.EPropertyType.START_DATE_AND_TIME)
 kortex_core.print_project_tree()

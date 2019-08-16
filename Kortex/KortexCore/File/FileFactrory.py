@@ -2,7 +2,7 @@ from os import path, listdir, makedirs
 from Kortex.KortexCore.CommonUtils.Singleton import singleton as singleton
 
 from Kortex.KortexCore.File.Directory import Directory as Directory
-from Kortex.KortexCore.File.FunctionalFile import FuncrionalFile as FunctionalFile
+from Kortex.KortexCore.File.FunctionalFile import FunctionalFile as FunctionalFile
 from Kortex.KortexCore.Event.EventAdapter import EventAdapter as EventAdapter
 import Kortex.KortexData.KortexEnums as KortexEnums
 

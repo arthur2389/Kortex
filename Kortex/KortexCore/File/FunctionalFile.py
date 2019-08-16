@@ -4,7 +4,7 @@ from os import path, remove, startfile
 from Kortex.KortexCore.File.File import File as File
 
 
-class FuncrionalFile(File):
+class FunctionalFile(File):
 
     """
     FunctionalFile object stand for one functional file in Kortex project file system. Functional file can
@@ -21,7 +21,7 @@ class FuncrionalFile(File):
         param: level: directory level in project tree (int)
         param: holdingDir: Holding directory object (Directory)
         """
-        super(FuncrionalFile, self).__init__(name=name, dir_name=dir_name, level=level, holding_dir=holding_dir)
+        super(FunctionalFile, self).__init__(name=name, dir_name=dir_name, level=level, holding_dir=holding_dir)
         self._suffix = "." + name.split(".")[-1]
 
     @property
@@ -38,8 +38,8 @@ class FuncrionalFile(File):
         """
 
         # Update the holding directory by removing the file object
-        if self._holdingDir:
-            self._holdingDir.RemoveFunctionalFile(self)
+        if self._holding_dir:
+            self._holding_dir.remove_functional_file(self)
 
         # remove file from file system and delete the object
         remove(self.path)
@@ -51,8 +51,8 @@ class FuncrionalFile(File):
         param: targetDir: directory to move to (Directory)
         """
         # Remove the object from the list of functional files in the holding directory
-        if self._holdingDir:
-            self._holdingDir.remove_functional_file(self)
+        if self._holding_dir:
+            self._holding_dir.remove_functional_file(self)
 
         self._change_name_and_replace(method=move, new_name=new_name, target_dir_path=target_dir.path)
 
@@ -92,5 +92,5 @@ class FuncrionalFile(File):
         """
         Debug procedure that prints the file name
         """
-        super(FuncrionalFile, self).__str__()
+        super(FunctionalFile, self).__str__()
         return self._name

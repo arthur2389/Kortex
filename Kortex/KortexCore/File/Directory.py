@@ -73,8 +73,8 @@ class Directory(File):
         event held by it.
         """
         # Remove the object from the list of directories in the holding directory
-        if self._holdingDir:
-            self._holdingDir.remove_directory(self)
+        if self._holding_dir:
+            self._holding_dir.remove_directory(self)
 
         # Remove the directory from the file system and delete the object
         rmtree(self.path)
@@ -94,8 +94,8 @@ class Directory(File):
             raise NotImplementedError
 
         # Remove the object from the list of directories in the holding directory
-        if self._holdingDir:
-            self._holdingDir.remove_directory(self)
+        if self._holding_dir:
+            self._holding_dir.remove_directory(self)
 
         # Move the directory to new directory in file system
         move(self.path, path.join(target_dir.path, self.name))
@@ -125,7 +125,7 @@ class Directory(File):
         if self._name == name:
             return self._event if get_event else self
         for file in self._file_list[EFileType.DIRECTORY].values():
-            found_obj = file.FindDirectory(name, get_event)
+            found_obj = file.find_directory(name, get_event)
             if found_obj is not None:
                 return found_obj
         return None
