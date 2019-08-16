@@ -10,135 +10,135 @@ class Event(object):
     and a reference to it's holding directory that provides the event the abilities that are
     related to file system.
     """
-    minuteToTimeUnit = {ETimeInterval.MINUTE: 1,
-                        ETimeInterval.HOUR: EventProperties.DateAndTime.Time.minutesInHours,
-                        ETimeInterval.DAY: EventProperties.DateAndTime.minutesInDay}
+    minute_to_time_unit = {ETimeInterval.MINUTE: 1,
+                           ETimeInterval.HOUR: EventProperties.DateAndTime.Time.minutes_in_hour,
+                           ETimeInterval.DAY: EventProperties.DateAndTime.minutes_in_day}
 
-    def __init__(self, directory, fileFactory):
+    def __init__(self, directory, file_factory):
         """
         Initialize event object with default properties and a holding directory
         param: directory: the directory of the event (Directory)
         """
         self._dir = directory
-        self._propObjs = {EPropertyType.DESCRIPTION: EventProperties.Description(self._dir.path),
-                          EPropertyType.IMAGE: EventProperties.Image(self._dir.path),
-                          EPropertyType.IMPORTANCE: EventProperties.Importance(self._dir.path),
-                          EPropertyType.START_DATE_AND_TIME: EventProperties.StartDateAndTime(self._dir.path),
-                          EPropertyType.END_DATE_AND_TIME: EventProperties.EndDateAndTime(self._dir.path),
-                          EPropertyType.MONEY_BALANCE: EventProperties.MoneyBalance(self._dir.path)}
-        self._fileFactory = fileFactory
+        self._prop_objs = {EPropertyType.DESCRIPTION: EventProperties.Description(self._dir.path),
+                           EPropertyType.IMAGE: EventProperties.Image(self._dir.path),
+                           EPropertyType.IMPORTANCE: EventProperties.Importance(self._dir.path),
+                           EPropertyType.START_DATE_AND_TIME: EventProperties.StartDateAndTime(self._dir.path),
+                           EPropertyType.END_DATE_AND_TIME: EventProperties.EndDateAndTime(self._dir.path),
+                           EPropertyType.MONEY_BALANCE: EventProperties.MoneyBalance(self._dir.path)}
+        self._fileFactory = file_factory
 
     @property
     def files(self):
-        return self._dir.functionalfiles
+        return self._dir.functional_files
 
     @property
     def events(self):
         return self._dir.directories
 
-    def LoadProperties(self):
+    def load_properties(self):
         """
         Load existing properties from metadata file
         """
-        for prop in self._propObjs.values():
-            prop.LoadExisting()
+        for prop in self._prop_objs.values():
+            prop.load_existing()
 
-    def SetDirectory(self, directory):
+    def set_directory(self, directory):
         """
         param: directory: new directory to set (Directory)
         """
         self._dir = directory
 
-    def GetDirectory(self):
+    def get_directory(self):
         """
         return: reference to event's directory (Directory)
         """
         return self._dir
 
-    def GetProperty(self, propName):
+    def get_property(self, prop_name):
         """
         Get a raw property object from the event
         param: propName: property name (KortexEnums.EProperty)
         return: full property object (Property)
         """
-        return self._propObjs[propName]
+        return self._prop_objs[prop_name]
 
-    def GetName(self):
+    def get_name(self):
         """
         return: events name (str)
         """
         return self._dir.name
 
-    def __getitem__(self, propName):
+    def __getitem__(self, prop_name):
         """
         Operator [] - get a property data via Get method
         param: propName: property name (KortexEnums.EProperty)
         return: property data (type varies with property type)
         """
-        return self._propObjs[propName].Get()
+        return self._prop_objs[prop_name].get()
 
-    def __setitem__(self, propName, propArgs):
+    def __setitem__(self, prop_name, prop_args):
         """
         Operator [] - set a property data via Assign method
         param: propName: property name (KortexEnums.EProperty)
         param propArgs: generic data object for setting a property (KortexKoreInterface.PropertyArgs)
         """
-        self._propObjs[propName].Assign(assignArgs=propArgs, event=self)
+        self._prop_objs[prop_name].assign(assign_args=prop_args, event=self)
 
-    def GetEventList(self, sortBy=None):
+    def get_event_list(self, sort_by=None):
         """
         Get nested event list of the event. The list may be sorted by a property
         param sortBy: property to sort by or None for not sorted list (KortexEnums.EProperty/None)
         return: sorted event list (list <Event>)
         """
-        dirList = []
-        self._dir.GetAllDirectories(dirList)
-        eventList = [_dir.GetEvent() for _dir in dirList]
-        if not sortBy:
-            return eventList
-        if sortBy == EPropertyType.DURATION:
-            eventList.sort(key=lambda event: event.GetDuration(timeUnit=ETimeInterval.MINUTE))
+        dir_list = []
+        self._dir.get_all_directories(dir_list)
+        event_list = list(map(lambda d: d.get_event(),  dir_list))
+        if not sort_by:
+            return event_list
+        if sort_by == EPropertyType.DURATION:
+            event_list.sort(key=lambda event: event.get_duration(time_unit=ETimeInterval.MINUTE))
         else:
-            eventList.sort(key=lambda event: int(event.GetProperty(sortBy)))
-        return eventList
+            event_list.sort(key=lambda event: int(event.get_property(sort_by)))
+        return event_list
 
-    def GetDuration(self, timeUnit):
+    def get_duration(self, time_unit):
         """
         """
-        startDate, endDate =\
-            self._propObjs[EPropertyType.START_DATE_AND_TIME], self._propObjs[EPropertyType.END_DATE_AND_TIME]
-        if not endDate.isset:
+        start_date, end_date =\
+            self._prop_objs[EPropertyType.START_DATE_AND_TIME], self._prop_objs[EPropertyType.END_DATE_AND_TIME]
+        if not end_date.is_set:
             return float(0)
-        timeBetweenStartAndEnd = int(endDate) - int(startDate)
-        return float(timeBetweenStartAndEnd/self.__class__.minuteToTimeUnit[timeUnit])
+        time_between_start_and_end = int(end_date) - int(start_date)
+        return float(time_between_start_and_end/self.__class__.minute_to_time_unit[time_unit])
 
-    def ImportFile(self, path=None, newName=None):
+    def import_file(self, path=None, new_name=None):
         """
         """
-        file = self._fileFactory.GenerateFunctionalFile(pathFile=path, level=self._dir._level)
-        file.Copy(targetDirObj=self._dir, newName=newName)
+        file = self._fileFactory.generate_functional_file(path_file=path, level=self._dir._level)
+        file.copy(target_dir_obj=self._dir, new_name=new_name)
 
-    def MoveFile(self, file, newEvent, eraseCurrent=True, newName=None):
+    def move_file(self, file, new_event, erase_current=True, new_name=None):
         """
         """
-        if eraseCurrent:
-            file.Move(targetDir=newEvent.GetDirectory(), newName=newName)
+        if erase_current:
+            file.Move(targetDir=new_event.get_directory(), new_name=new_name)
         else:
-            file.Copy(targetDir=newEvent.GetDirectory(), newName=newName)
+            file.Copy(targetDir=new_event.get_directory(), new_name=new_name)
         return file
 
-    def OpenFile(self, file):
+    def open_file(self, file):
         """
         """
-        file.Open()
+        file.open()
 
-    def OpenEventLocation(self):
+    def open_event_location(self):
         """
         """
-        self._dir.Open()
+        self._dir.open()
 
     def __repr__(self):
         """
         Debug method that prints the name of the property
         """
-        return "Event << " + self.GetName() + " >>"
+        return "Event << " + self.get_name() + " >>"

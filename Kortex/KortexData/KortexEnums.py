@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class ConstantData(object):
-    projectRepoName = ".kor"
-    eventDataFileName = "eventData.json"
+    ProjectRepoName = ".kor"
+    EventDataFileName = "eventData.json"
 
 
 class EFileType(Enum):
@@ -19,6 +19,7 @@ class EPropertyType(Enum):
     IMPORTANCE = 5
     MONEY_BALANCE = 6
     DURATION = 7
+
 
 class Importance(Enum):
     TRIVIAL = 1

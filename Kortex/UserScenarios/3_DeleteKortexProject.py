@@ -1,10 +1,10 @@
 import shutil
 import os
 
-rootDir = input("Set your kortex project root directory: ")
+root_dir = input("Set your kortex project root directory: ")
 
-userInput = input("Are sure sure you want to erase all files in :" + rootDir + " ? [Yes for remove]\n")
+user_input = input("Are sure sure you want to erase all files in :" + root_dir + " ? [Yes for remove]\n")
 
-if userInput == "Yes":
+if user_input == "Yes":
     for _dir in os.listdir(rootDir):
         shutil.rmtree(os.path.join(rootDir, _dir))

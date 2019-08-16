@@ -6,6 +6,7 @@ from Kortex.KortexCore.File.FunctionalFile import FuncrionalFile as FunctionalFi
 from Kortex.KortexCore.Event.EventAdapter import EventAdapter as EventAdapter
 import Kortex.KortexData.KortexEnums as KortexEnums
 
+
 @singleton
 class FileFactory(object):
 
@@ -15,9 +16,10 @@ class FileFactory(object):
     one the another.
     """
     def __init__(self):
-        self._eventAdapter = EventAdapter()
+        self._event_adapter = EventAdapter()
 
-    def GenerateFunctionalFile(self, pathFile, level=0, holdingDir=None):
+    @staticmethod
+    def generate_functional_file(path_file, level=0, holding_dir=None):
         """
         Create functional file object
         param: pathFile: full path to functional file (str)
@@ -25,13 +27,13 @@ class FileFactory(object):
         param: holdingDir: holding directory object of the file (Directory)
         return: created functional file object (FunctionalFile)
         """
-        assert path.isfile(pathFile)
-        return FunctionalFile(name=path.basename(pathFile),
+        assert path.isfile(path_file)
+        return FunctionalFile(name=path.basename(path_file),
                               level=level,
-                              holdingDir=holdingDir,
-                              dirname=path.dirname(pathFile))
+                              holding_dir=holding_dir,
+                              dir_name=path.dirname(path_file))
 
-    def GenerateDirectory(self, pathFile, level=0, holdingDir=None):
+    def generate_directory(self, path_file, level=0, holding_dir=None):
         """
         Recursive procedure that maps directories of file system to Directory objects.
         Also creates event for each directory and maps event to it's directory.
@@ -42,26 +44,29 @@ class FileFactory(object):
         """
 
         # Create the directory in file system if it doesn't exists
-        if not path.exists(pathFile):
-            makedirs(pathFile)
+        if not path.exists(path_file):
+            makedirs(path_file)
 
         # Create directory object, create an event and pair them
-        _dir = Directory(name=path.basename(pathFile), dirname=path.dirname(pathFile), level=level, holdingDir=holdingDir)
-        event = self._eventAdapter.GetEvent(_dir, self)
-        _dir.SetEvent(event)
+        _dir = Directory(name=path.basename(path_file),
+                         dir_name=path.dirname(path_file),
+                         level=level,
+                         holding_dir=holding_dir)
+        event = self._event_adapter.get_event(_dir, self)
+        _dir.set_event(event)
 
         # Map all nested directories in the created directory, and remove metadata directory
         # from it as it will not be represented in the tree
-        fileList = listdir(pathFile)
-        fileList.remove(KortexEnums.ConstantData.projectRepoName)
+        file_list = listdir(path_file)
+        file_list.remove(KortexEnums.ConstantData.ProjectRepoName)
 
         # Go over the nested files and map them into objects (FunctionalFile/Directory)
-        for file in fileList:
-            fullPath = path.join(pathFile, file)
-            if path.isdir(fullPath):
-                fileObj = self.GenerateDirectory(fullPath, level + 1, _dir)
-                _dir.AddDirectory(fileObj)
+        for file in file_list:
+            full_path = path.join(path_file, file)
+            if path.isdir(full_path):
+                file_obj = self.generate_directory(full_path, level + 1, _dir)
+                _dir.add_directory(file_obj)
             else:
-                fileObj = self.GenerateFunctionalFile(fullPath, level + 1, _dir)
-                _dir.AddFunctionalFile(fileObj)
+                file_obj = self.generate_functional_file(full_path, level + 1, _dir)
+                _dir.add_functional_file(file_obj)
         return _dir

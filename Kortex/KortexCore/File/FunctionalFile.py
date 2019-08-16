@@ -11,9 +11,9 @@ class FuncrionalFile(File):
     the text, presentation, image file etc.
     """
 
-    addMe = "AddFunctionalFile"
+    add_me = "add_functional_file"
 
-    def __init__(self, name, level=0, holdingDir=None, dirname=None):
+    def __init__(self, name, level=0, holding_dir=None, dir_name=None):
         """
         Initialize FunctionalFile object
         param: name: last name of directory (str)
@@ -21,7 +21,7 @@ class FuncrionalFile(File):
         param: level: directory level in project tree (int)
         param: holdingDir: Holding directory object (Directory)
         """
-        super(FuncrionalFile, self).__init__(name=name, dirname=dirname, level=level, holdingDir=holdingDir)
+        super(FuncrionalFile, self).__init__(name=name, dir_name=dir_name, level=level, holding_dir=holding_dir)
         self._suffix = "." + name.split(".")[-1]
 
     @property
@@ -32,7 +32,7 @@ class FuncrionalFile(File):
         """
         return self._suffix
 
-    def Remove(self):
+    def remove(self):
         """
         Remove functional file from the Kortex project
         """
@@ -45,48 +45,48 @@ class FuncrionalFile(File):
         remove(self.path)
         del self
 
-    def Move(self, targetDir, newName=None):
+    def move(self, target_dir, new_name=None):
         """
         Move the current file to a new directory in the project.
         param: targetDir: directory to move to (Directory)
         """
         # Remove the object from the list of functional files in the holding directory
         if self._holdingDir:
-            self._holdingDir.RemoveFunctionalFile(self)
+            self._holdingDir.remove_functional_file(self)
 
-        self._changeNameAndReplace(method=move, newName=newName, targetDirPath=targetDir.path)
+        self._change_name_and_replace(method=move, new_name=new_name, target_dir_path=target_dir.path)
 
         # Update the file and the holding directory
-        self._UpdateHoldingDirectory(targetDir=targetDir)
+        self._update_holding_directory(target_dir=target_dir)
 
-    def Copy(self, targetDirObj=None, targetDirPath=None, newName=None):
+    def copy(self, target_dir_obj=None, target_dir_path=None, new_name=None):
         """
         Copy functional file, possibly assign new name for it.
         param: targetDir: Full path destination for the file (str)
         param: newName: new name for the file (None/str)
         """
-        if not targetDirObj and not targetDirPath:
+        if not target_dir_obj and not target_dir_path:
             raise NotImplementedError
 
-        if targetDirObj:
-            self._changeNameAndReplace(method=copyfile, newName=newName, targetDirPath=targetDirObj.path)
+        if target_dir_obj:
+            self._change_name_and_replace(method=copyfile, new_name=new_name, target_dir_path=target_dir_obj.path)
 
             # Update the file and the holding directory
-            self._UpdateHoldingDirectory(targetDir=targetDirObj)
+            self._update_holding_directory(target_dir=target_dir_obj)
         else:
-            self._changeNameAndReplace(method=copyfile, newName=newName, targetDirPath=targetDirPath)
+            self._change_name_and_replace(method=copyfile, new_name=new_name, target_dir_path=target_dir_path)
 
-    def Open(self):
+    def open(self):
         """
         Open a functional file with it's default application
         """
         startfile(self.path)
 
-    def _changeNameAndReplace(self, method, newName, targetDirPath):
-        oldPath = self.path
-        if newName:
-            self.name = newName + self._suffix
-        method(oldPath, path.join(targetDirPath, self.name))
+    def _change_name_and_replace(self, method, new_name, target_dir_path):
+        old_path = self.path
+        if new_name:
+            self.name = new_name + self._suffix
+        method(old_path, path.join(target_dir_path, self.name))
 
     def __str__(self):
         """
@@ -94,4 +94,3 @@ class FuncrionalFile(File):
         """
         super(FuncrionalFile, self).__str__()
         return self._name
-

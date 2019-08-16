@@ -12,7 +12,7 @@ class EventAdapter(object):
     Adapter between Event and File. Also stand for factory for events
     """
 
-    def GetEvent(self, directory, fileFactory):
+    def get_event(self, directory, file_factory):
         """
         Creates new event and creates .kor metadata folder, as well as metadata file
         for the event if needed.
@@ -20,25 +20,25 @@ class EventAdapter(object):
         param: directory: holding directory of the event (Directory)
         return: new event (Event)
         """
-        loadExistingEvent = True
+        load_existing_event = True
 
         # Create directory for metadata
-        repoFolder = path.join(directory.path, KortexEnums.ConstantData.projectRepoName)
-        if not path.exists(repoFolder):
-            makedirs(repoFolder)
+        repo_folder = path.join(directory.path, KortexEnums.ConstantData.ProjectRepoName)
+        if not path.exists(repo_folder):
+            makedirs(repo_folder)
 
-        eventDataFile = path.join(repoFolder, KortexEnums.ConstantData.eventDataFileName)
+        event_data_file = path.join(repo_folder, KortexEnums.ConstantData.EventDataFileName)
 
         # In case the event is new, create the metadata file
-        if not path.exists(eventDataFile):
-            JsonIO.CreateEmptyFile(eventDataFile)
-            loadExistingEvent = False
+        if not path.exists(event_data_file):
+            JsonIO.create_empty_file(event_data_file)
+            load_existing_event = False
 
         # Create event object
-        event = Event(directory, fileFactory)
+        event = Event(directory, file_factory)
 
         # In case the event already exists from previous activations, load the properties
-        if loadExistingEvent:
-            event.LoadProperties()
+        if load_existing_event:
+            event.load_properties()
 
         return event
