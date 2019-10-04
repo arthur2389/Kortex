@@ -1,6 +1,6 @@
-from Kortex.KortexCoreInterface.KortexCoreInterface import KortexCoreInterface as KortexCoreInterface
-from Kortex.KortexCoreInterface.KortexCoreInterface import PropertyArgs as PropertyArgs
-import Kortex.KortexData.KortexEnums as KortexEnums
+from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface as KortexCoreInterface
+from KortexCoreInterface.KortexCoreInterface import PropertyArgs as PropertyArgs
+import KortexData.KortexEnums as KortexEnums
 
 rootDir = input("Set your kortex project root directory: ")
 

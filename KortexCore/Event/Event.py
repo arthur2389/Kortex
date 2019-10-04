@@ -1,6 +1,6 @@
-from Kortex.KortexData.KortexEnums import EPropertyType as EPropertyType
-from Kortex.KortexData.KortexEnums import ETimeInterval as ETimeInterval
-import Kortex.KortexCore.Event.EventProperties as EventProperties
+from KortexData.KortexEnums import EPropertyType as EPropertyType
+from KortexData.KortexEnums import ETimeInterval as ETimeInterval
+import KortexCore.Event.EventProperties as EventProperties
 
 
 class Event(object):

@@ -2,8 +2,8 @@ from shutil import rmtree, move
 from os import path
 import subprocess
 
-from Kortex.KortexCore.File.File import File as File
-from Kortex.KortexData.KortexEnums import EFileType as EFileType
+from KortexCore.File.File import File as File
+from KortexData.KortexEnums import EFileType as EFileType
 
 
 class Directory(File):

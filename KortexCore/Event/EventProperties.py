@@ -2,9 +2,9 @@ import abc
 from os import path
 import datetime
 
-from Kortex.KortexCore.File.FunctionalFile import FunctionalFile as FunctionalFile
-from Kortex.KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
-import Kortex.KortexData.KortexEnums as KortexEnums
+from KortexCore.File.FunctionalFile import FunctionalFile as FunctionalFile
+from KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
+import KortexData.KortexEnums as KortexEnums
 
 
 class PropertyBase(object):

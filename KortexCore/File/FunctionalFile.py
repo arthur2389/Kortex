@@ -1,7 +1,7 @@
 from shutil import move, copyfile
 from os import path, remove, startfile
 
-from Kortex.KortexCore.File.File import File as File
+from KortexCore.File.File import File as File
 
 
 class FunctionalFile(File):

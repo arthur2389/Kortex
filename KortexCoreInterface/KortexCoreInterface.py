@@ -1,5 +1,5 @@
 from os import path
-from Kortex.KortexCore.File.FileFactrory import FileFactory as FileFactory
+from KortexCore.File.FileFactrory import FileFactory as FileFactory
 
 
 class KortexCoreInterface(object):

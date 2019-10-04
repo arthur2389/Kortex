@@ -1,9 +1,9 @@
 from os import makedirs, path
 
-from Kortex.KortexCore.CommonUtils.Singleton import singleton as singleton
-from Kortex.KortexCore.Event.Event import Event as Event
-from Kortex.KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
-import Kortex.KortexData.KortexEnums as KortexEnums
+from KortexCore.CommonUtils.Singleton import singleton as singleton
+from KortexCore.Event.Event import Event as Event
+from KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
+import KortexData.KortexEnums as KortexEnums
 
 
 @singleton
