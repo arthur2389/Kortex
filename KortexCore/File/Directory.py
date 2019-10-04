@@ -3,7 +3,7 @@ from os import path
 import subprocess
 
 from KortexCore.File.File import File as File
-from KortexData.KortexEnums import EFileType as EFileType
+from EnumAndConsts.EnumsAndConsts import EFileType as EFileType
 
 
 class Directory(File):

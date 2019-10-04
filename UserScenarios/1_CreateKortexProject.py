@@ -3,7 +3,7 @@ import sys
 
 from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface as KortexCoreInterface
 from KortexCoreInterface.KortexCoreInterface import PropertyArgs as PropertyArgs
-import KortexData.KortexEnums as KortexEnums
+import EnumAndConsts.EnumsAndConsts as KortexEnums
 
 
 TEST_ROOT_DIR = path.dirname(sys.modules['__main__'].__file__)

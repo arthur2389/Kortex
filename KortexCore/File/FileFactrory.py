@@ -4,7 +4,7 @@ from KortexCore.CommonUtils.Singleton import singleton as singleton
 from KortexCore.File.Directory import Directory as Directory
 from KortexCore.File.FunctionalFile import FunctionalFile as FunctionalFile
 from KortexCore.Event.EventAdapter import EventAdapter as EventAdapter
-import KortexData.KortexEnums as KortexEnums
+import EnumAndConsts.EnumsAndConsts as KortexEnums
 
 
 @singleton

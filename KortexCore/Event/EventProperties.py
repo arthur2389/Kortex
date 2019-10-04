@@ -4,7 +4,7 @@ import datetime
 
 from KortexCore.File.FunctionalFile import FunctionalFile as FunctionalFile
 from KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
-import KortexData.KortexEnums as KortexEnums
+import EnumAndConsts.EnumsAndConsts as KortexEnums
 
 
 class PropertyBase(object):

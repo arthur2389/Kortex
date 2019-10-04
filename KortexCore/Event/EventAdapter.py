@@ -3,7 +3,7 @@ from os import makedirs, path
 from KortexCore.CommonUtils.Singleton import singleton as singleton
 from KortexCore.Event.Event import Event as Event
 from KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
-import KortexData.KortexEnums as KortexEnums
+import EnumAndConsts.EnumsAndConsts as KortexEnums
 
 
 @singleton
