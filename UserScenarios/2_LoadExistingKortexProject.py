@@ -1,6 +1,7 @@
 from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface as KortexCoreInterface
 from KortexCoreInterface.KortexCoreInterface import PropertyArgs as PropertyArgs
 import EnumAndConsts.EnumsAndConsts as KortexEnums
+from KortexCoreInterface.KortexCoreInterface import DateTimeArgs
 
 rootDir = input("Set your kortex project root directory: ")
 
@@ -12,10 +13,6 @@ n112 = kortex_core.get_event("Nested112")
 n113 = kortex_core.get_event("Nested113")
 n114 = kortex_core.get_event("Nested114")
 
-# Set date and time
-n112[KortexEnums.EPropertyType.START_DATE_AND_TIME] = PropertyArgs(date="14/10/2020", time="15:00")
-n113[KortexEnums.EPropertyType.START_DATE_AND_TIME] = PropertyArgs(date="15/10/2020", time="10:00")
-n114[KortexEnums.EPropertyType.START_DATE_AND_TIME] = PropertyArgs(date="21/10/2020", time="09:00")
 
 # Change importance
 n112[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance=KortexEnums.Importance.LOW)
@@ -25,10 +22,9 @@ n12 = kortex_core.get_event("Nested12")
 n13 = kortex_core.get_event("Nested13")
 n14 = kortex_core.get_event("Nested14")
 
-n11[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="1/1/2021", time="10:00")
-n12[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="1/1/2021", time="11:30")
-n13[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="1/1/2021", time="11:50")
-n14[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="1/1/2021", time="12:30")
+n11.set_date_time(start_date_time_args=DateTimeArgs(day=15, month=10, year=2019, hour=0, minute=30),
+                  end_date_time_args=DateTimeArgs(day=23, month=10, year=2019, hour=0, minute=50))
+
 
 kortex_core.remove_event(n112)
 kortex_core.remove_event(n113)

@@ -4,6 +4,7 @@ from enum import Enum
 class ConstantData(object):
     ProjectRepoName = ".kor"
     EventDataFileName = "eventData.json"
+    DefaultImage = "default.jpg"
 
 
 class EFileType(Enum):
@@ -17,7 +18,7 @@ class EPropertyType(Enum):
     START_DATE_AND_TIME = 3
     END_DATE_AND_TIME = 4
     IMPORTANCE = 5
-    MONEY_BALANCE = 6
+    CASH_FLOW = 6
     DURATION = 7
 
 
@@ -30,6 +31,7 @@ class Importance(Enum):
 
 
 class ETimeInterval(Enum):
-    MINUTE = 1
-    HOUR = 2
-    DAY = 3
+    SECOND = 1
+    MINUTE = 2
+    HOUR = 3
+    DAY = 4

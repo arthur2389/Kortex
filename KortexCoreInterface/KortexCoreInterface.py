@@ -102,20 +102,24 @@ class PropertyArgs(object):
     def __init__(self, img_path=None,
                  description=None,
                  importance=None,
-                 date=None,
-                 time=None,
-                 money_balance=None):
+                 cash_flow=None):
         """
         param: imgPath: full path of image [".jpg", ".png", ".gif", ".svg"] file (str)
         param description: event description (str)
         param importance: event importance (KortexEnums.Importance)
-        param date: event date (DD/MM/YYYY str)
-        param: time: event time (HH:MM str)
         param: moneyBalance: event money in/out (int)
         """
         self.img_path = img_path
         self.description = description
         self.importance = importance
-        self.date = date
-        self.time = time
-        self.money_balance = money_balance
+        self.cash_flow = cash_flow
+
+
+class DateTimeArgs(object):
+
+    def __init__(self, day, month, year, hour, minute):
+        self.day = day
+        self.month = month
+        self.year = year
+        self.hour = hour
+        self.minute = minute
