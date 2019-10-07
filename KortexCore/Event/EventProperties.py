@@ -270,6 +270,7 @@ class DateAndTime(QuantifiableProperty):
         super(DateAndTime, self).__init__(dir_path)
         self._date_and_time = date_and_time
         self._handler = handler
+        super(DateAndTime, self).assign(assign_args=self.__str__())
 
     def assign(self, date_and_time, **kwargs):
         """
@@ -283,21 +284,21 @@ class DateAndTime(QuantifiableProperty):
         return self._date_and_time
 
     def __str__(self):
-        return self._date_and_time.strftime("%d/%m/%Y") + " " + self._date_and_time.strftime("%H:%M")
+        return self._date_and_time.ctime()
 
     def __int__(self):
         """
         Cast data and time to integer by summing the total number of minutes
         return: total number of minutes (int)
         """
-        return self._handler.time_length(self._date_and_time)
+        return int(self._handler.time_length(self._date_and_time))
 
     def _set_desc(self, desc_str):
         """
         Parse date and time input from metadata file and assign in object
         param descStr: data and time from file (str)
         """
-        self._date_and_time = self._handler.date_time_from_str(desc_str)
+        self._date_and_time = self._handler.date_time_from_ctime(desc_str)
 
 
 class StartDateAndTime(DateAndTime):

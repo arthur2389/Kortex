@@ -76,6 +76,11 @@ class Event(object):
     def set_date_time(self, start_date_time_args=None, end_date_time_args=None):
         """
         """
+        start_dt, end_dt = self._date_time_handler(curr_start=self[EPropertyType.START_DATE_AND_TIME],
+                                                   start=start_date_time_args,
+                                                   end=end_date_time_args)
+        self._prop_objs[EPropertyType.START_DATE_AND_TIME].assign(date_and_time=start_dt)
+        self._prop_objs[EPropertyType.END_DATE_AND_TIME].assign(date_and_time=end_dt)
 
     def __getitem__(self, prop_name):
         """
@@ -91,7 +96,7 @@ class Event(object):
         param: propName: property name (KortexEnums.EProperty)
         param propArgs: generic data object for setting a property (KortexKoreInterface.PropertyArgs)
         """
-        self._prop_objs[prop_name].assign(assign_args=prop_args, event=self)
+        self._prop_objs[prop_name].assign(assign_args=prop_args)
 
     def get_event_list(self, sort_by=None):
         """

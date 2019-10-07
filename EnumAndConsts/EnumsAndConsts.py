@@ -31,6 +31,7 @@ class Importance(Enum):
 
 
 class ETimeInterval(Enum):
-    MINUTE = 1
-    HOUR = 2
-    DAY = 3
+    SECOND = 1
+    MINUTE = 2
+    HOUR = 3
+    DAY = 4

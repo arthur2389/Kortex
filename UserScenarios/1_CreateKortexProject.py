@@ -1,8 +1,9 @@
 from os import path
 import sys
 
-from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface as KortexCoreInterface
-from KortexCoreInterface.KortexCoreInterface import PropertyArgs as PropertyArgs
+from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface
+from KortexCoreInterface.KortexCoreInterface import PropertyArgs
+from KortexCoreInterface.KortexCoreInterface import DateTimeArgs
 import EnumAndConsts.EnumsAndConsts as KortexEnums
 
 
@@ -30,17 +31,13 @@ f1[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance=KortexEnums.I
 f1.import_file(path=audio1)
 
 f2[KortexEnums.EPropertyType.IMAGE] = PropertyArgs(img_path=image2)
-f2.
-f2[KortexEnums.EPropertyType.START_DATE_AND_TIME] = PropertyArgs(date="13/10/2019", time="20:30")
-f2[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="13/10/2019", time="23:30")
+f2.set_date_time(start_date_time_args=DateTimeArgs(day=13, month=10, year=2019, hour=20, minute=30),
+                 end_date_time_args=DateTimeArgs(day=13, month=10, year=2019, hour=23, minute=30))
 f2.import_file(path=audio2, new_name="Audio2")
 
 f3[KortexEnums.EPropertyType.IMAGE] = PropertyArgs(img_path=image3)
-f3[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="20/10/2019", time="20:00")
-f3[KortexEnums.EPropertyType.START_DATE_AND_TIME] = PropertyArgs(date="18/10/2019", time="21:30")
-
-f4[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="20/10/2019", time="21:00")
-f4[KortexEnums.EPropertyType.START_DATE_AND_TIME] = PropertyArgs(date="20/10/2019", time="10:00")
+f3.set_date_time(start_date_time_args=DateTimeArgs(day=18, month=10, year=2019, hour=20, minute=00),
+                 end_date_time_args=DateTimeArgs(day=20, month=10, year=2019, hour=21, minute=30))
 
 f1duration = f1.get_duration(time_unit=KortexEnums.ETimeInterval.MINUTE)
 f2duration = f2.get_duration(time_unit=KortexEnums.ETimeInterval.HOUR)

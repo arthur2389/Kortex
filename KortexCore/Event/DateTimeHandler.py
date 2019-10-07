@@ -7,17 +7,14 @@ from EnumAndConsts.EnumsAndConsts import ETimeInterval
 @singleton
 class DateTimeHandler(object):
 
-    minute_to_time_unit = {ETimeInterval.MINUTE: 1,
-                           ETimeInterval.HOUR: 60,
-                           ETimeInterval.DAY: 1440}
-
-    def __init__(self):
-        pass
+    time_intervals = {ETimeInterval.SECOND: 1,
+                      ETimeInterval.MINUTE: 60,
+                      ETimeInterval.HOUR: 3600}
 
     def get_default_date_time(self):
         """
         """
-        start_dt = self._default()
+        start_dt = self._default_time()
         end_dt = start_dt + self._default_delta()
         return start_dt, end_dt
 
@@ -40,7 +37,7 @@ class DateTimeHandler(object):
             end_dt = self.get_date_time(day=end.day, month=end.month, year=end.year,
                                         hour=end.hour, minute=end.minute)
 
-        if int(end_dt) < int(start_dt):
+        if self.time_length(end_dt) < self.time_length(start_dt):
             raise ValueError
         return start_dt, end_dt
 
@@ -49,43 +46,30 @@ class DateTimeHandler(object):
         """
         return datetime.datetime(day=day, month=month, year=year, hour=hour, minute=minute)
 
-    def date_time_from_str(self, datetime_str):
-        date, time = datetime_str.split(" ")
-        day, month, year = self._parse_date(date)
-        hour, minute = self._parse_time(time)
-        return self.get_date_time(day=day, month=month, year=year, hour=hour, minute=minute)
+    def date_time_from_ctime(self, datetime_str):
+        """
+        """
+        return datetime.datetime.strptime(datetime_str, "%a %b %d %H:%M:%S %Y")
 
     def get_duration(self, start_dt, end_dt, time_unit):
-        duration = self.time_length(end_dt) - self.time_length(start_dt)
-        return float(duration/self.minute_to_time_unit[time_unit])
+        """
+        """
+        return self.time_length(end_dt, time_unit) - self.time_length(start_dt, time_unit)
 
-    def time_length(self, dt):
-        return int(dt)
+    def time_length(self, dt, time_unit=ETimeInterval.MINUTE):
+        """
+        """
+        delta = dt - datetime.datetime(1970,1,1)
+        if time_unit == ETimeInterval.DAY:
+            return delta.days
+        return delta.total_seconds() / self.time_intervals[time_unit]
 
     def _default_time(self):
+        """
+        """
         return datetime.datetime.now()
 
     def _default_delta(self):
+        """
+        """
         return datetime.timedelta(hours=1)
-
-    def _parse_date(self, date_str):
-        """
-        Turns "DD:MM:YYYY" to integers that represent the date
-        param dateStr: "DD:MM:YYYY" (str)
-        return: day, month, year (tuple (int, int, int))
-        """
-        data_list = date_str.split("/")
-        if len(data_list) != 3:
-            raise TypeError
-        return int(data_list[0]), int(data_list[1]), int(data_list[2])
-
-    def _parse_time(self, time_str):
-        """
-        Turns "HH:MM" to integers that represent the time
-        param dateStr: "HH:MM" (str)
-        return: hours, minutes (tuple (int, int))
-        """
-        data_list = time_str.split(":")
-        if len(data_list) != 2:
-            raise TypeError
-        return int(data_list[0]), int(data_list[1])
