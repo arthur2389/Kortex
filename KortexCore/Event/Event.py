@@ -20,12 +20,12 @@ class Event(object):
         param: directory: the directory of the event (Directory)
         """
         self._dir = directory
-        self._prop_objs = {EPropertyType.DESCRIPTION: EventProperties.Description(self._dir.path),
+        self._prop_objs = {EPropertyType.DESCRIPTION: EventProperties.Description(self._dir.path, directory.name),
                            EPropertyType.IMAGE: EventProperties.Image(self._dir.path),
                            EPropertyType.IMPORTANCE: EventProperties.Importance(self._dir.path),
                            EPropertyType.START_DATE_AND_TIME: EventProperties.StartDateAndTime(self._dir.path),
                            EPropertyType.END_DATE_AND_TIME: EventProperties.EndDateAndTime(self._dir.path),
-                           EPropertyType.MONEY_BALANCE: EventProperties.MoneyBalance(self._dir.path)}
+                           EPropertyType.CASH_FLOW: EventProperties.CashFlow(self._dir.path)}
         self._fileFactory = file_factory
 
     @property

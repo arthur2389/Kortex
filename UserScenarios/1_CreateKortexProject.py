@@ -53,12 +53,12 @@ n13 = kortex_core.create_event("Nested13", holding_event=f1)
 n14 = kortex_core.create_event("Nested14", holding_event=f1)
 
 # Assign money balance to events
-n11[KortexEnums.EPropertyType.MONEY_BALANCE] = PropertyArgs(money_balance=650)
-n12[KortexEnums.EPropertyType.MONEY_BALANCE] = PropertyArgs(money_balance=-2000)
-n14[KortexEnums.EPropertyType.MONEY_BALANCE] = PropertyArgs(money_balance=8000)
+n11[KortexEnums.EPropertyType.CASH_FLOW] = PropertyArgs(cash_flow=650)
+n12[KortexEnums.EPropertyType.CASH_FLOW] = PropertyArgs(cash_flow=-2000)
+n14[KortexEnums.EPropertyType.CASH_FLOW] = PropertyArgs(cash_flow=8000)
 
 # Get the events sorted by money balance
-mb_sorted_list = f1.get_event_list(sort_by=KortexEnums.EPropertyType.MONEY_BALANCE)
+mb_sorted_list = f1.get_event_list(sort_by=KortexEnums.EPropertyType.CASH_FLOW)
 
 # Create sub events related to Nested11
 n111 = kortex_core.create_event("Nested111", holding_event=n11)

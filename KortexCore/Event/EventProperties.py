@@ -49,17 +49,14 @@ class PropertyBase(object):
         return self.__class__.__name__ + " : " + _repr
 
 
-class FileBasedProperty(PropertyBase):
+class Image(PropertyBase):
 
-    """
-    Base class for properties that are represented by functional files in the event's metadata folder.
-    Main property variable is FunctionalFile object that stands for the file.
-    """
-    suffixes = []
+    suffixes = [".jpg", ".png", ".gif", ".svg"]
 
     def __init__(self, dir_path):
-        super(FileBasedProperty, self).__init__(dir_path)
-        self._file = None
+        super(Image, self).__init__(dir_path)
+        self._img = FunctionalFile(name=path.basename(KortexEnums.ConstantData.DefaultImage),
+                                   dir_name=path.dirname(path.dirname(path.abspath(__file__))))
 
     def load_existing(self):
         """
@@ -67,39 +64,28 @@ class FileBasedProperty(PropertyBase):
         """
         for suffix in self.__class__.suffixes:
             if path.exists(path.join(self._path, self.__class__.__name__ + suffix)):
-                self._file = FunctionalFile(name=self.__class__.__name__ + suffix,
-                                            dir_name=self._path,
-                                            level=0,
-                                            holding_dir=None)
+                self._img = FunctionalFile(name=self.__class__.__name__ + suffix,
+                                           dir_name=self._path,
+                                           level=0,
+                                           holding_dir=None)
                 break
 
     def assign(self, assign_args, **kwargs):
         """
         param: filePath: assign new file to property by copying and replacing the old file
         """
-        self._file = FunctionalFile(name=path.basename(assign_args),
-                                    dir_name=path.dirname(assign_args))
-        if self._file.suffix not in self.__class__.suffixes:
+        self._img = FunctionalFile(name=path.basename(assign_args.img_path),
+                                   dir_name=path.dirname(assign_args.img_path))
+        if self._img.suffix not in self.__class__.suffixes:
             raise FileNotFoundError
-        self._file.copy(target_dir_path=self._path, new_name=self.__class__.__name__)
+        self._img.copy(target_dir_path=self._path, new_name=self.__class__.__name__)
 
     def get(self):
         """
         Returns the full path of the file
         return: file full path (str) or None the is no file
         """
-        return self._file.path if self._file else None
-
-
-class Image(FileBasedProperty):
-
-    """
-    Image is a type of file based property
-    """
-    suffixes = [".jpg", ".png", ".gif", ".svg"]
-
-    def assign(self, assign_args, **kwargs):
-        super(Image, self).assign(assign_args=assign_args.img_path)
+        return self._img.path
 
 
 class DescriptionProperty(PropertyBase):
@@ -142,9 +128,9 @@ class Description(DescriptionProperty):
     """
     Event description string. Free description section about the event
     """
-    def __init__(self, dir_path):
+    def __init__(self, dir_path, name):
         super(Description, self).__init__(dir_path)
-        self._description = None
+        self._desc = "Event: " + name
 
     def assign(self, assign_args, **kwargs):
         """
@@ -158,7 +144,7 @@ class Description(DescriptionProperty):
         """
         return: event's description (str)
         """
-        return self._description
+        return self._desc
 
     def _set_desc(self, desc_str):
         """
@@ -233,47 +219,47 @@ class Importance(QuantifiableProperty):
         self._importance = getattr(KortexEnums.Importance, desc_str)
 
 
-class MoneyBalance(QuantifiableProperty):
+class CashFlow(QuantifiableProperty):
     """
     Represents money input or output of the event
     """
 
     def __init__(self, dir_path):
-        super(MoneyBalance, self).__init__(dir_path)
-        self._money_balance = 0
+        super(CashFlow, self).__init__(dir_path)
+        self._cash_flow = 0
 
     def assign(self, assign_args, **kwargs):
         """
         Assign new money balance value
         param: propArgs: argument object that holds moneyBalance field (KortexKoreInterface.PropertyArgs)
         """
-        self._money_balance = int(assign_args.money_balance)
-        super(MoneyBalance, self).assign(assign_args=assign_args.money_balance)
+        self._cash_flow = int(assign_args.cash_flow)
+        super(CashFlow, self).assign(assign_args=assign_args.cash_flow)
 
     def get(self):
         """
         return: money balamce value (int)
         """
-        return self._money_balance
+        return self._cash_flow
 
     def __str__(self):
-        money_balance = self.get()
-        if not money_balance:
+        cash_flow = self.get()
+        if not cash_flow:
             return "MoneyBalance : Property does not exists"
-        return "MoneyBalance : " + str(money_balance)
+        return "MoneyBalance : " + str(cash_flow)
 
     def __int__(self):
         """
         return: money balance value (int)
         """
-        return int(self._money_balance)
+        return int(self._cash_flow)
 
     def _set_desc(self, desc_str):
         """
         Convent string money balance to integer field
         param: descStr: money balance (str)
         """
-        self._money_balance = int(desc_str)
+        self._cash_flow = int(desc_str)
 
 
 class DateAndTime(QuantifiableProperty):
@@ -410,15 +396,6 @@ class DateAndTime(QuantifiableProperty):
         super(DateAndTime, self).__init__(dir_path)
         self._date = None
         self._time = None
-        self._date_and_time_set = False
-
-    @property
-    def is_set(self):
-        """
-        return: is the date and time set for the event
-        type: Bool
-        """
-        return self._date_and_time_set
 
     def get(self):
         """
@@ -497,12 +474,18 @@ class StartDateAndTime(DateAndTime):
         end_date_and_time = event.get_property(KortexEnums.EPropertyType.END_DATE_AND_TIME)
         self._set_date_time(assign_args.date, assign_args.time)
         # assert start date and time is not ahead of end data and time
-        if end_date_and_time.is_set and int(end_date_and_time) < int(self):
+        if int(end_date_and_time) < int(self):
             raise NotImplementedError
         super(StartDateAndTime, self).assign(assign_args=self.get())
 
 
 class EndDateAndTime(DateAndTime):
+
+    def __init__(self, dir_path):
+        super(EndDateAndTime, self).__init__(dir_path)
+        end_time = datetime.datetime.now() + datetime.timedelta(hours=1)
+        self._set_date_time(date=end_time.strftime("%d/%m/%Y"), time=end_time.strftime("%H:%M"))
+        super(EndDateAndTime, self).assign(assign_args=self.get())
 
     def assign(self, assign_args, event, **kwargs):
         """

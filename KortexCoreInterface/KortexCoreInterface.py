@@ -104,7 +104,7 @@ class PropertyArgs(object):
                  importance=None,
                  date=None,
                  time=None,
-                 money_balance=None):
+                 cash_flow=None):
         """
         param: imgPath: full path of image [".jpg", ".png", ".gif", ".svg"] file (str)
         param description: event description (str)
@@ -118,4 +118,4 @@ class PropertyArgs(object):
         self.importance = importance
         self.date = date
         self.time = time
-        self.money_balance = money_balance
+        self.cash_flow = cash_flow
