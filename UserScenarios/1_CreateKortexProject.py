@@ -30,6 +30,7 @@ f1[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance=KortexEnums.I
 f1.import_file(path=audio1)
 
 f2[KortexEnums.EPropertyType.IMAGE] = PropertyArgs(img_path=image2)
+f2.
 f2[KortexEnums.EPropertyType.START_DATE_AND_TIME] = PropertyArgs(date="13/10/2019", time="20:30")
 f2[KortexEnums.EPropertyType.END_DATE_AND_TIME] = PropertyArgs(date="13/10/2019", time="23:30")
 f2.import_file(path=audio2, new_name="Audio2")

@@ -1,5 +1,6 @@
-from EnumAndConsts.EnumsAndConsts import EPropertyType as EPropertyType
-from EnumAndConsts.EnumsAndConsts import ETimeInterval as ETimeInterval
+from EnumAndConsts.EnumsAndConsts import EPropertyType
+from EnumAndConsts.EnumsAndConsts import ETimeInterval
+from KortexCore.Event.DateTimeHandler import DateTimeHandler
 import KortexCore.Event.EventProperties as EventProperties
 
 
@@ -10,9 +11,6 @@ class Event(object):
     and a reference to it's holding directory that provides the event the abilities that are
     related to file system.
     """
-    minute_to_time_unit = {ETimeInterval.MINUTE: 1,
-                           ETimeInterval.HOUR: EventProperties.DateAndTime.Time.minutes_in_hour,
-                           ETimeInterval.DAY: EventProperties.DateAndTime.minutes_in_day}
 
     def __init__(self, directory, file_factory):
         """
@@ -20,13 +18,19 @@ class Event(object):
         param: directory: the directory of the event (Directory)
         """
         self._dir = directory
+        self._date_time_handler = DateTimeHandler()
         self._prop_objs = {EPropertyType.DESCRIPTION: EventProperties.Description(self._dir.path, directory.name),
                            EPropertyType.IMAGE: EventProperties.Image(self._dir.path),
                            EPropertyType.IMPORTANCE: EventProperties.Importance(self._dir.path),
-                           EPropertyType.START_DATE_AND_TIME: EventProperties.StartDateAndTime(self._dir.path),
-                           EPropertyType.END_DATE_AND_TIME: EventProperties.EndDateAndTime(self._dir.path),
                            EPropertyType.CASH_FLOW: EventProperties.CashFlow(self._dir.path)}
         self._fileFactory = file_factory
+        start_dt, end_dt = self._date_time_handler.get_default_date_time()
+        self._prop_objs[EPropertyType.START_DATE_AND_TIME] = EventProperties.StartDateAndTime(self._dir.path,
+                                                                                              start_dt,
+                                                                                              self._date_time_handler)
+        self._prop_objs[EPropertyType.END_DATE_AND_TIME] = EventProperties.EndDateAndTime(self._dir.path,
+                                                                                          end_dt,
+                                                                                          self._date_time_handler)
 
     @property
     def files(self):
@@ -69,6 +73,10 @@ class Event(object):
         """
         return self._dir.name
 
+    def set_date_time(self, start_date_time_args=None, end_date_time_args=None):
+        """
+        """
+
     def __getitem__(self, prop_name):
         """
         Operator [] - get a property data via Get method
@@ -105,12 +113,9 @@ class Event(object):
     def get_duration(self, time_unit):
         """
         """
-        start_date, end_date =\
-            self._prop_objs[EPropertyType.START_DATE_AND_TIME], self._prop_objs[EPropertyType.END_DATE_AND_TIME]
-        if not end_date.is_set:
-            return float(0)
-        time_between_start_and_end = int(end_date) - int(start_date)
-        return float(time_between_start_and_end/self.__class__.minute_to_time_unit[time_unit])
+        return self._date_time_handler.get_duration(start_dt=self[EPropertyType.START_DATE_AND_TIME],
+                                                    end_dt=self[EPropertyType.END_DATE_AND_TIME],
+                                                    time_unit=time_unit)
 
     def import_file(self, path=None, new_name=None):
         """
