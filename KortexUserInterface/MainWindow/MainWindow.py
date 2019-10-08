@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import ExtFiles
 from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface
+from EnumAndConsts.EnumsAndConsts import EPropertyType
 
 
 # ToDo - REMOVE !!!!
@@ -50,11 +51,11 @@ class KortexMainWindow(QMainWindow):
 
     def _build_tree(self):
         self.tree = QTreeWidget(self)
-        self.tree.setColumnCount(1)
-        self.tree.setHeaderLabels(["Event"])
+        self.tree.setColumnCount(3)
+        self.tree.setHeaderLabels(["Event", "Start time", "End time"])
         base_events = self.kortex_project.root.events
         for base_event in base_events.values():
-            item = tree_item(item=QTreeWidgetItem([base_event.get_name()]),
+            item = tree_item(item=self._tree_widget_item(base_event),
                              event=base_event)
             self._load_base_event_item(item)
             self.tree.addTopLevelItem(item.item)
@@ -63,10 +64,15 @@ class KortexMainWindow(QMainWindow):
     def _load_base_event_item(self, parent_item):
         events = parent_item.event.events
         for e in events.values():
-            item = tree_item(item=QTreeWidgetItem([e.get_name()]),
+            item = tree_item(item=self._tree_widget_item(e),
                              event=e)
             self._load_base_event_item(item)
             parent_item.item.addChild(item.item)
+
+    def _tree_widget_item(self, event):
+        return QTreeWidgetItem([event.get_name(),
+                                event.get_property(prop_name=EPropertyType.START_DATE_AND_TIME),
+                                event.get_property(prop_name=EPropertyType.END_DATE_AND_TIME)])
 
     def _load(self):
         print("Load!!")

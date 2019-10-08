@@ -42,10 +42,7 @@ class PropertyBase(object):
         """
         Debug method for representing a property
         """
-        _repr = self.get()
-        if not _repr:
-            return self.__class__.__name__ + " : Property does not exists"
-        return self.__class__.__name__ + " : " + _repr
+        return str(self.get())
 
 
 class Image(PropertyBase):
@@ -103,7 +100,7 @@ class DescriptionProperty(PropertyBase):
         Load existing property from metadata file
         """
         data = JsonIO.read(self._data_file_path)
-        if self.__class__.__name__ in data.keys():
+        if self.__class__.__name__ in data:
             self._set_desc(data[self.__class__.__name__])
 
     def assign(self, assign_args, **kwargs):
@@ -171,6 +168,12 @@ class Importance(QuantifiableProperty):
     """
     Event importance. Represented by KortexEnums.Importance enumeration
     """
+    to_str = {KortexEnums.Importance.TRIVIAL: "trivial",
+              KortexEnums.Importance.LOW: "low",
+              KortexEnums.Importance.MEDIUM: "medium",
+              KortexEnums.Importance.HIGH: "high",
+              KortexEnums.Importance.VERY_HIGH: "very high"}
+
     def __init__(self, dir_path):
         """
         Default importance is set to trivial
@@ -205,10 +208,7 @@ class Importance(QuantifiableProperty):
         """
         Debug method to represent the importance
         """
-        importance = self.get()
-        if not importance:
-            return "Importance : Property does not exists"
-        return "Importance : " + importance.name
+        return self.to_str[self._importance]
 
     def _set_desc(self, desc_str):
         """
@@ -241,12 +241,6 @@ class CashFlow(QuantifiableProperty):
         """
         return self._cash_flow
 
-    def __str__(self):
-        cash_flow = self.get()
-        if not cash_flow:
-            return "MoneyBalance : Property does not exists"
-        return "MoneyBalance : " + str(cash_flow)
-
     def __int__(self):
         """
         return: money balance value (int)
@@ -263,14 +257,13 @@ class CashFlow(QuantifiableProperty):
 
 class DateAndTime(QuantifiableProperty):
 
-    def __init__(self, dir_path, date_and_time, handler):
+    def __init__(self, dir_path, handler):
         """
         Initialize date and time by default values
         """
         super(DateAndTime, self).__init__(dir_path)
-        self._date_and_time = date_and_time
+        self._date_and_time = None
         self._handler = handler
-        super(DateAndTime, self).assign(assign_args=self.__str__())
 
     def assign(self, date_and_time, **kwargs):
         """

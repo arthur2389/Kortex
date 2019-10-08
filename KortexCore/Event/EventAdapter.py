@@ -38,7 +38,10 @@ class EventAdapter(object):
         event = Event(directory, file_factory)
 
         # In case the event already exists from previous activations, load the properties
+        # Otherwise, set the current date and time to the event
         if load_existing_event:
             event.load_properties()
+        else:
+            event.set_current_date_time()
 
         return event
