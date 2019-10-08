@@ -1,10 +1,10 @@
 from KortexCore.CommonUtils.Singleton import singleton as singleton
 from KortexCore.Event.Event import Event as Event
-from KortexUserInterface.EventUI.EventWindow import EventWindow as EventWindow
+from KortexUserInterface.EventWindow.EventWindow import EventWindow as EventWindow
 
 
 @singleton
-class EventWindowBuilder(object):
+class EventWindowManager(object):
 
     active_events = {}
 

@@ -38,7 +38,7 @@ class Event(object):
 
     @property
     def events(self):
-        return self._dir.directories
+        return {name: _dir.get_event() for name, _dir in self._dir.directories.items()}
 
     def load_properties(self):
         """
