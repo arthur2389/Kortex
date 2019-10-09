@@ -59,7 +59,7 @@ class DateTimeHandler(object):
     def time_length(self, dt, time_unit=ETimeInterval.MINUTE):
         """
         """
-        delta = dt - datetime.datetime(1970,1,1)
+        delta = dt - datetime.datetime(1970, 1, 1)
         if time_unit == ETimeInterval.DAY:
             return delta.days
         return delta.total_seconds() / self.time_intervals[time_unit]

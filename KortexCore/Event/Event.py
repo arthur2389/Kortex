@@ -22,15 +22,11 @@ class Event(object):
         self._prop_objs = {EPropertyType.DESCRIPTION: EventProperties.Description(self._dir.path, directory.name),
                            EPropertyType.IMAGE: EventProperties.Image(self._dir.path),
                            EPropertyType.IMPORTANCE: EventProperties.Importance(self._dir.path),
-                           EPropertyType.CASH_FLOW: EventProperties.CashFlow(self._dir.path)}
+                           EPropertyType.CASH_FLOW: EventProperties.CashFlow(self._dir.path),
+                           EPropertyType.START_DATE_AND_TIME: EventProperties.StartDateAndTime(self._dir.path, self._date_time_handler),
+                           EPropertyType.END_DATE_AND_TIME: EventProperties.EndDateAndTime(self._dir.path, self._date_time_handler)
+                           }
         self._fileFactory = file_factory
-        start_dt, end_dt = self._date_time_handler.get_default_date_time()
-        self._prop_objs[EPropertyType.START_DATE_AND_TIME] = EventProperties.StartDateAndTime(self._dir.path,
-                                                                                              start_dt,
-                                                                                              self._date_time_handler)
-        self._prop_objs[EPropertyType.END_DATE_AND_TIME] = EventProperties.EndDateAndTime(self._dir.path,
-                                                                                          end_dt,
-                                                                                          self._date_time_handler)
 
     @property
     def files(self):
@@ -38,7 +34,14 @@ class Event(object):
 
     @property
     def events(self):
-        return self._dir.directories
+        return {name: _dir.get_event() for name, _dir in self._dir.directories.items()}
+
+    def set_current_date_time(self):
+        """
+        """
+        start_dt, end_dt = self._date_time_handler.get_default_date_time()
+        self._prop_objs[EPropertyType.START_DATE_AND_TIME].assign(start_dt)
+        self._prop_objs[EPropertyType.END_DATE_AND_TIME].assign(end_dt)
 
     def load_properties(self):
         """
@@ -59,13 +62,13 @@ class Event(object):
         """
         return self._dir
 
-    def get_property(self, prop_name):
+    def get_property(self, prop_name, cast_type=str):
         """
         Get a raw property object from the event
         param: propName: property name (KortexEnums.EProperty)
         return: full property object (Property)
         """
-        return self._prop_objs[prop_name]
+        return cast_type(self._prop_objs[prop_name])
 
     def get_name(self):
         """
@@ -112,7 +115,7 @@ class Event(object):
         if sort_by == EPropertyType.DURATION:
             event_list.sort(key=lambda event: event.get_duration(time_unit=ETimeInterval.MINUTE))
         else:
-            event_list.sort(key=lambda event: int(event.get_property(sort_by)))
+            event_list.sort(key=lambda event: event.get_property(prop_name=sort_by, cast_type=int))
         return event_list
 
     def get_duration(self, time_unit):

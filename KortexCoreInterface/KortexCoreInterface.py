@@ -23,6 +23,10 @@ class KortexCoreInterface(object):
         self._project.get_all_directories(dir_list=all_dirs)
         self._all_events = list(map(lambda _dir: _dir.name, all_dirs))
 
+    @property
+    def root(self):
+        return self._project.get_event()
+
     def create_event(self, event_name, holding_event=None):
         """
         Create new event. The new event cannot have the same name the other event in the project
