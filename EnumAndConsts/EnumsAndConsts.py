@@ -3,7 +3,7 @@ from enum import Enum
 
 class ConstantData(object):
     ProjectRepoName = ".kor"
-    EventDataFileName = "eventData.json"
+    EventDataFileName = "eventData"
     DefaultImage = "default.jpg"
 
 

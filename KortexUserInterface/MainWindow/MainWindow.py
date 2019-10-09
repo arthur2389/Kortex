@@ -3,6 +3,7 @@ from collections import namedtuple
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface
+from KortexCore.CommonUtils.DataModerator import DataModerator
 from EnumAndConsts.EnumsAndConsts import EPropertyType
 
 
@@ -14,35 +15,29 @@ class KortexMainWindow(QMainWindow):
     def __init__(self):
         super(KortexMainWindow, self).__init__()
 
-        self.data_moderator =
-        self.kortex_project = KortexCoreInterface(project)
+        self._data_moderator = DataModerator()
+        prj_path, prj_name = self._data_moderator.get_current_project()
+        self.kortex_project = KortexCoreInterface(root_dir=prj_path)
 
-        self.setWindowTitle("Kortex")
+        self.setWindowTitle("Kortex " + "Project : " + prj_name)
         self._build_main_menu()
         self._build_tree()
         self.resize(700, 300)
         self.show()
 
-    def _set_font(self, w):
-        """
-        Set font for caller
-        """
-        font = QFont()
-        font.setPointSize(11)
-        w.setFont(font)
-
     def _build_main_menu(self):
         bar = self.menuBar()
         file = bar.addMenu("&File")
-        self._set_font(bar)
 
-        _load_project = QAction(QIcon(ExtFiles.get("open")), "Load project", self)
+        _load_project = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="open")),
+                                "Load project", self)
         _load_project.setShortcut('Ctrl+W')
         _load_project.setStatusTip('Load existing project')
         _load_project.triggered.connect(self._load)
         file.addAction(_load_project)
 
-        _new_project = QAction(QIcon(ExtFiles.get("new")), "New project", self)
+        _new_project = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="new")),
+                               "New project", self)
         _new_project.setShortcut('Ctrl+N')
         _new_project.setStatusTip('Create new project')
         _new_project.triggered.connect(self._new)
@@ -50,7 +45,8 @@ class KortexMainWindow(QMainWindow):
 
         file.addSeparator()
 
-        _exit = QAction(QIcon(ExtFiles.get("exit")), "Exit", self)
+        _exit = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="exit")),
+                        "Exit", self)
         _exit.setShortcut('Ctrl+Q')
         _exit.setStatusTip('Exit application')
         _exit.triggered.connect(self.close)
@@ -61,7 +57,6 @@ class KortexMainWindow(QMainWindow):
         table_props = ["Event", "Start time", "End time", "Importance", "Cash flow"]
         self.tree.setHeaderLabels(table_props)
         self.tree.setAlternatingRowColors(True)
-        self._set_font(self.tree)
 
         base_events = self.kortex_project.root.events
         for base_event in base_events.values():
@@ -72,7 +67,7 @@ class KortexMainWindow(QMainWindow):
                 name = "event_full"
             else:
                 name = "event_empty"
-            item.item.setIcon(0, QIcon(ExtFiles.get(name)))
+            item.item.setIcon(0, QIcon(self._data_moderator.get_file_path(group="main_tree", name=name)))
             self.tree.addTopLevelItem(item.item)
         self.setCentralWidget(self.tree)
         self.tree.setColumnWidth(0, 200)
@@ -89,7 +84,7 @@ class KortexMainWindow(QMainWindow):
                 name = "event_full"
             else:
                 name = "event_empty"
-            item.item.setIcon(0, QIcon(ExtFiles.get(name)))
+            item.item.setIcon(0, QIcon(self._data_moderator.get_file_path(group="main_tree", name=name)))
             parent_item.item.addChild(item.item)
         return len(events) > 0
 
