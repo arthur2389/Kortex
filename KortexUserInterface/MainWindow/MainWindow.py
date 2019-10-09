@@ -29,14 +29,14 @@ class KortexMainWindow(QMainWindow):
         bar = self.menuBar()
         file = bar.addMenu("&File")
 
-        _load_project = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="open")),
+        _load_project = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="open.png")),
                                 "Load project", self)
         _load_project.setShortcut('Ctrl+W')
         _load_project.setStatusTip('Load existing project')
         _load_project.triggered.connect(self._load)
         file.addAction(_load_project)
 
-        _new_project = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="new")),
+        _new_project = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="new.png")),
                                "New project", self)
         _new_project.setShortcut('Ctrl+N')
         _new_project.setStatusTip('Create new project')
@@ -45,7 +45,7 @@ class KortexMainWindow(QMainWindow):
 
         file.addSeparator()
 
-        _exit = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="exit")),
+        _exit = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="exit.png")),
                         "Exit", self)
         _exit.setShortcut('Ctrl+Q')
         _exit.setStatusTip('Exit application')
@@ -64,9 +64,9 @@ class KortexMainWindow(QMainWindow):
                              event=base_event)
             nested_exist = self._load_base_event_item(item)
             if nested_exist:
-                name = "event_full"
+                name = "event_full.png"
             else:
-                name = "event_empty"
+                name = "event_empty.png"
             item.item.setIcon(0, QIcon(self._data_moderator.get_file_path(group="main_tree", name=name)))
             self.tree.addTopLevelItem(item.item)
         self.setCentralWidget(self.tree)
@@ -81,9 +81,9 @@ class KortexMainWindow(QMainWindow):
                              event=e)
             nested_exist = self._load_base_event_item(item)
             if nested_exist:
-                name = "event_full"
+                name = "event_full.png"
             else:
-                name = "event_empty"
+                name = "event_empty.png"
             item.item.setIcon(0, QIcon(self._data_moderator.get_file_path(group="main_tree", name=name)))
             parent_item.item.addChild(item.item)
         return len(events) > 0

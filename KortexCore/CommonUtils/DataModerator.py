@@ -19,7 +19,7 @@ class DataModerator(object):
         return _file[parameter]
 
     def get_file_path(self, group, name):
-        return path.join(self._images, group, name + ".png")
+        return path.join(self._images, group, name)
 
     def get_current_project(self):
         name = self.projects["current_project"]

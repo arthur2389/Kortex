@@ -1,12 +1,6 @@
 from enum import Enum
 
 
-class ConstantData(object):
-    ProjectRepoName = ".kor"
-    EventDataFileName = "eventData"
-    DefaultImage = "default.jpg"
-
-
 class EFileType(Enum):
     DIRECTORY = 1
     FUNCTIONAL_FILE = 2

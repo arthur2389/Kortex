@@ -1,10 +1,9 @@
 from os import path, listdir, makedirs
-from KortexCore.CommonUtils.Singleton import singleton as singleton
-
-from KortexCore.File.Directory import Directory as Directory
-from KortexCore.File.FunctionalFile import FunctionalFile as FunctionalFile
-from KortexCore.Event.EventAdapter import EventAdapter as EventAdapter
-import EnumAndConsts.EnumsAndConsts as KortexEnums
+from KortexCore.CommonUtils.Singleton import singleton
+from KortexCore.CommonUtils.DataModerator import DataModerator
+from KortexCore.File.Directory import Directory
+from KortexCore.File.FunctionalFile import FunctionalFile
+from KortexCore.Event.EventAdapter import EventAdapter
 
 
 @singleton
@@ -17,6 +16,7 @@ class FileFactory(object):
     """
     def __init__(self):
         self._event_adapter = EventAdapter()
+        self._data_moderator = DataModerator()
 
     @staticmethod
     def generate_functional_file(path_file, level=0, holding_dir=None):
@@ -58,7 +58,8 @@ class FileFactory(object):
         # Map all nested directories in the created directory, and remove metadata directory
         # from it as it will not be represented in the tree
         file_list = listdir(path_file)
-        file_list.remove(KortexEnums.ConstantData.ProjectRepoName)
+        file_list.remove(self._data_moderator.get_data(group="project_consts",
+                                                       parameter="project_repo_name"))
 
         # Go over the nested files and map them into objects (FunctionalFile/Directory)
         for file in file_list:

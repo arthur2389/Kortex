@@ -1,4 +1,5 @@
 from os import makedirs, path
+from KortexCore.CommonUtils.DataModerator import DataModerator
 
 from KortexCore.CommonUtils.Singleton import singleton as singleton
 from KortexCore.Event.Event import Event as Event
@@ -11,6 +12,8 @@ class EventAdapter(object):
     """
     Adapter between Event and File. Also stand for factory for events
     """
+    def __init__(self):
+        self._data_moderator = DataModerator()
 
     def get_event(self, directory, file_factory):
         """
@@ -23,11 +26,13 @@ class EventAdapter(object):
         load_existing_event = True
 
         # Create directory for metadata
-        repo_folder = path.join(directory.path, KortexEnums.ConstantData.ProjectRepoName)
+        repo_folder = path.join(directory.path, self._data_moderator.get_data(group="project_consts",
+                                                                              parameter="project_repo_name"))
         if not path.exists(repo_folder):
             makedirs(repo_folder)
 
-        event_data_file = path.join(repo_folder, KortexEnums.ConstantData.EventDataFileName)
+        event_data_file = path.join(repo_folder, self._data_moderator.get_data(group="project_consts",
+                                                                               parameter="event_data_file_name"))
 
         # In case the event is new, create the metadata file
         if not path.exists(event_data_file):
