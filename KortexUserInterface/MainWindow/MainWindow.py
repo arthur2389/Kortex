@@ -2,13 +2,8 @@ from collections import namedtuple
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-import ExtFiles
 from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface
 from EnumAndConsts.EnumsAndConsts import EPropertyType
-
-
-# ToDo - REMOVE !!!!
-project = "C://Users//USER//Documents//arthur//Project"
 
 
 tree_item = namedtuple('tree_item', ('item', 'event'))
@@ -17,10 +12,9 @@ tree_item = namedtuple('tree_item', ('item', 'event'))
 class KortexMainWindow(QMainWindow):
 
     def __init__(self):
-        # ToDo - REMOVE !!!!
-        global project
         super(KortexMainWindow, self).__init__()
 
+        self.data_moderator =
         self.kortex_project = KortexCoreInterface(project)
 
         self.setWindowTitle("Kortex")

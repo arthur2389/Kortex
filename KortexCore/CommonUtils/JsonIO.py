@@ -29,7 +29,7 @@ class JsonIO(object):
         # the content the the dictionary and return the data.
         if file_path in JsonIO.parsed_data.keys():
             return JsonIO.parsed_data[file_path]
-        JsonIO.parsed_data[file_path] = json.load(open(file_path))
+        JsonIO.parsed_data[file_path] = json.load(open(file_path + ".json"))
         return JsonIO.parsed_data[file_path]
 
     @staticmethod
