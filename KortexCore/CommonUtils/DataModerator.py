@@ -27,9 +27,9 @@ class DataModerator(object):
 
     def set_current_project(self, name):
         self.projects["current_project"] = name
-        JsonIO.write(file_path=path.join(self._data_files, "projects"),
-                     field="current_project",
-                     data=name)
+        JsonIO.write(path.join(self._data_files, "projects"),
+                     "current_project",
+                     name)
 
     @property
     def projectnames(self):

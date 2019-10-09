@@ -114,7 +114,7 @@ class DescriptionProperty(PropertyBase):
         Write a new description to metadata file
         param: desc: description to write (str)
         """
-        JsonIO.write(file_path=self._data_file_path, field=self.__class__.__name__, data=assign_args)
+        JsonIO.write(self._data_file_path, self.__class__.__name__, assign_args)
 
     @abc.abstractmethod
     def _set_desc(self, desc_str):
