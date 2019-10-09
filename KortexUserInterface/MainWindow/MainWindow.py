@@ -5,7 +5,7 @@ from PyQt5.QtGui import *
 from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface
 from KortexCore.CommonUtils.DataModerator import DataModerator
 from EnumAndConsts.EnumsAndConsts import EPropertyType
-
+from KortexUserInterface.MainWindow.Dialogs import LoadProjectWindow, NewProjectWindow
 
 tree_item = namedtuple('tree_item', ('item', 'event'))
 
@@ -32,10 +32,7 @@ class KortexMainWindow(QMainWindow):
         self._data_moderator = DataModerator()
         self.window_sizes = \
             KortexMainWindow.WindowSizes(sizes=self._data_moderator.get_data(group="main_window_sizes"))
-        prj_path, prj_name = self._data_moderator.get_current_project()
-        self.kortex_project = KortexCoreInterface(root_dir=prj_path)
-
-        self.setWindowTitle("Kortex " + "Project : " + prj_name)
+        self._load_project()
         self._build_main_menu()
         self._build_tree()
         self.resize(self.window_sizes.main_window_width, self.window_sizes.main_window_height)
@@ -68,12 +65,41 @@ class KortexMainWindow(QMainWindow):
         _exit.triggered.connect(self.close)
         file.addAction(_exit)
 
+        event = bar.addMenu("Event")
+        _new_event = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu",
+                                                                      name="new_event.png")),
+                             "New event", self)
+        _new_event.setShortcut('Ctrl+E+N')
+        _new_event.setStatusTip('Create new event')
+        _new_event.triggered.connect(self._new_event)
+        event.addAction(_new_event)
+
+        _open_event = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu",
+                                                                       name="open_event.png")),
+                              "Open event", self)
+        _open_event.setShortcut('Ctrl+E+O')
+        _open_event.setStatusTip('Open existing event')
+        _open_event.triggered.connect(self._open_event)
+        event.addAction(_open_event)
+
+        _remove_event = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu",
+                                                                         name="remove_event.png")),
+                                      "Remove event", self)
+        _remove_event.setShortcut('Ctrl+E+W')
+        _remove_event.setStatusTip('Delete event')
+        _remove_event.triggered.connect(self._remove_event)
+        event.addAction(_remove_event)
+
     def _build_tree(self):
         self.tree = QTreeWidget()
         table_props = ["Event", "Start time", "End time", "Importance", "Cash flow"]
         self.tree.setHeaderLabels(table_props)
         self.tree.setAlternatingRowColors(True)
 
+        self._fill_tree()
+
+    def _fill_tree(self):
+        self.tree.clear()
         base_events = self.kortex_project.root.events
         for base_event in base_events.values():
             item = tree_item(item=self._tree_widget_item(base_event),
@@ -121,7 +147,30 @@ class KortexMainWindow(QMainWindow):
         return i
 
     def _load(self):
-        print("Load!!")
+        load_ui = LoadProjectWindow(self)
+        if load_ui.exec_():
+            self._data_moderator.set_current_project(load_ui.project_to_load)
+            self._load_project()
+            self._fill_tree()
 
     def _new(self):
-        print("New!!")
+        new_ui = NewProjectWindow(self)
+        if new_ui.exec_():
+            self._data_moderator.set_new_project(name=new_ui.new_project["name"],
+                                                 pr_path=new_ui.new_project["path"])
+            self._load_project()
+            self._fill_tree()
+
+    def _new_event(self):
+        print("New event")
+
+    def _open_event(self):
+        print("Open event")
+
+    def _remove_event(self):
+        print("Remove event")
+
+    def _load_project(self):
+        prj_path, prj_name = self._data_moderator.get_current_project()
+        self.kortex_project = KortexCoreInterface(root_dir=prj_path)
+        self.setWindowTitle("Kortex " + "Project : " + prj_name)

@@ -1,4 +1,1 @@
-{
-	"current_project" : "Project", 
-	"projects" : {"Project": "C://Users//USER//Documents//arthur//Project"}
-}
+{"current_project": "NewProject", "projects": {"Project": "C://Users//USER//Documents//arthur//Project", "NewProject": "C://Users//USER//Documents//arthur//NewProject", "Music": "C:\\Users\\USER\\Music\\Music", "Nested": "C:\\Users\\USER\\Music\\Music\\Nested", "Two names": "C:\\Users\\USER\\Music\\Music\\Two names"}}

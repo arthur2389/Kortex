@@ -33,6 +33,13 @@ class DataModerator(object):
                      "current_project",
                      name)
 
+    def set_new_project(self, name, pr_path):
+        self.projects["projects"].update({name: path.join(pr_path, name)})
+        JsonIO.write(path.join(self._data_files, "projects"),
+                     "projects",
+                     self.projects["projects"])
+        self.set_current_project(name)
+
     @property
     def projectnames(self):
         return self.projects["projects"].keys()
