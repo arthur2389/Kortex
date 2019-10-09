@@ -1,8 +1,9 @@
 import abc
 from os import path
 
-from KortexCore.File.FunctionalFile import FunctionalFile as FunctionalFile
-from KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
+from KortexCore.CommonUtils.DataModerator import DataModerator
+from KortexCore.File.FunctionalFile import FunctionalFile
+from KortexCore.CommonUtils.JsonIO import JsonIO
 import EnumAndConsts.EnumsAndConsts as KortexEnums
 
 
@@ -15,7 +16,9 @@ class PropertyBase(object):
         """
         param: dirPath: each property is initiated by it's metadata directory path (str)
         """
-        self._path = path.join(dir_path, KortexEnums.ConstantData.ProjectRepoName)
+        self._data_moderator = DataModerator()
+        self._path = path.join(dir_path, self._data_moderator.get_data(group="project_consts",
+                                                                       parameter="project_repo_name"))
 
     @abc.abstractmethod
     def load_existing(self):
@@ -51,8 +54,10 @@ class Image(PropertyBase):
 
     def __init__(self, dir_path):
         super(Image, self).__init__(dir_path)
-        self._img = FunctionalFile(name=path.basename(KortexEnums.ConstantData.DefaultImage),
-                                   dir_name=path.dirname(path.dirname(path.abspath(__file__))))
+        img_name = self._data_moderator.get_data(group="project_consts", parameter="default_event_image")
+        img_path = self._data_moderator.get_file_path(group="user_project", name=img_name)
+        self._img = FunctionalFile(name=path.basename(img_path),
+                                   dir_name=path.dirname(img_name))
 
     def load_existing(self):
         """
@@ -92,7 +97,8 @@ class DescriptionProperty(PropertyBase):
     """
     def __init__(self, dir_path):
         super(DescriptionProperty, self).__init__(dir_path)
-        self._data_file_path = path.join(self._path, KortexEnums.ConstantData.EventDataFileName)
+        self._data_file_path = path.join(self._path, self._data_moderator.get_data(group="project_consts",
+                                                                                   parameter="event_data_file_name"))
         self._desc = None
 
     def load_existing(self):
@@ -108,7 +114,7 @@ class DescriptionProperty(PropertyBase):
         Write a new description to metadata file
         param: desc: description to write (str)
         """
-        JsonIO.write(file_path=self._data_file_path, field=self.__class__.__name__, data=assign_args)
+        JsonIO.write(self._data_file_path, self.__class__.__name__, assign_args)
 
     @abc.abstractmethod
     def _set_desc(self, desc_str):
