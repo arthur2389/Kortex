@@ -14,9 +14,11 @@ class DataModerator(object):
         self._images = path.join(self._main_path, "Metadata//Images")
         self.projects = JsonIO.read(path.join(self._data_files, "projects"))
 
-    def get_data(self, group, parameter):
-        _file = JsonIO.read(path.join(self._data_files, group))
-        return _file[parameter]
+    def get_data(self, group, parameter=None):
+        file_data = JsonIO.read(path.join(self._data_files, group))
+        if not parameter:
+            return file_data
+        return file_data[parameter]
 
     def get_file_path(self, group, name):
         return path.join(self._images, group, name)

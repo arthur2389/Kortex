@@ -1,15 +1,19 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+
+from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexUserInterface.MainWindow.MainWindow import KortexMainWindow
 
 
 def _font():
     """
-    Set font for caller
+    Get font object with font properties
     """
+    size = DataModerator().get_data(group="main_window_sizes",
+                                    parameter="font_size")
     font = QFont()
-    font.setPointSize(11)
+    font.setPointSize(size)
     return font
 
 
