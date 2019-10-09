@@ -72,34 +72,29 @@ class KortexMainWindow(QMainWindow):
         for base_event in base_events.values():
             item = tree_item(item=self._tree_widget_item(base_event),
                              event=base_event)
-            nested_exist = self._load_base_event_item(item)
-            if nested_exist:
-                name = "event_full.png"
-            else:
-                name = "event_empty.png"
-            item.item.setIcon(0, QIcon(self._data_moderator.get_file_path(group="main_tree", name=name)))
+            self._load_tree_node(item)
             self.tree.addTopLevelItem(item.item)
         self.setCentralWidget(self.tree)
         self.tree.setColumnWidth(0, self.window_sizes.tree_column_width)
         self.tree.setColumnWidth(1, self.window_sizes.tree_column_width)
         self.tree.setColumnWidth(2, self.window_sizes.tree_column_width)
 
-    def _load_base_event_item(self, parent_item):
+    def _load_tree_node(self, parent_item):
         events = parent_item.event.events
+        if len(events) > 0:
+            icon_name = "event_full.png"
+        else:
+            icon_name = "event_empty.png"
+        parent_item.item.setIcon(0, QIcon(self._data_moderator.get_file_path(group="main_tree", name=icon_name)))
+
         for e in events.values():
             item = tree_item(item=self._tree_widget_item(e),
                              event=e)
-            nested_exist = self._load_base_event_item(item)
-            if nested_exist:
-                name = "event_full.png"
-            else:
-                name = "event_empty.png"
-            item.item.setIcon(0, QIcon(self._data_moderator.get_file_path(group="main_tree", name=name)))
+            self._load_tree_node(item)
             parent_item.item.addChild(item.item)
-        return len(events) > 0
 
     def _tree_widget_item(self, event):
-        i = QTreeWidgetItem(["  " + event.get_name(),
+        i = QTreeWidgetItem([event.get_name(),
                              event.get_property(prop_name=EPropertyType.START_DATE_AND_TIME),
                              event.get_property(prop_name=EPropertyType.END_DATE_AND_TIME),
                              event.get_property(prop_name=EPropertyType.IMPORTANCE),
