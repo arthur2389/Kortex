@@ -12,6 +12,12 @@ tree_item = namedtuple('tree_item', ('item', 'event'))
 
 class KortexMainWindow(QMainWindow):
 
+    importance_icons = {"trivial": "trivial_priority.png",
+                        "low": "low_priority.png",
+                        "medium": "medium_priority.png",
+                        "high": "high_priority.png",
+                        "very high": "very_high_priority.png"}
+
     class WindowSizes(object):
 
         def __init__(self, sizes):
@@ -94,11 +100,24 @@ class KortexMainWindow(QMainWindow):
             parent_item.item.addChild(item.item)
 
     def _tree_widget_item(self, event):
+        cash = event.get_property(prop_name=EPropertyType.CASH_FLOW, cast_type=int)
+        if cash >= 0:
+            icon_name = "plus"
+        else:
+            icon_name = "minus"
+            cash = abs(cash)
+        importance = event.get_property(prop_name=EPropertyType.IMPORTANCE)
+
         i = QTreeWidgetItem([event.get_name(),
                              event.get_property(prop_name=EPropertyType.START_DATE_AND_TIME),
                              event.get_property(prop_name=EPropertyType.END_DATE_AND_TIME),
-                             event.get_property(prop_name=EPropertyType.IMPORTANCE),
-                             event.get_property(prop_name=EPropertyType.CASH_FLOW)])
+                             importance,
+                             str(cash)])
+        i.setIcon(3, QIcon(self._data_moderator.get_file_path(group="main_tree",
+                                                              name=self.importance_icons[importance])))
+        i.setIcon(4, QIcon(self._data_moderator.get_file_path(group="main_tree",
+                                                              name=icon_name)))
+
         return i
 
     def _load(self):

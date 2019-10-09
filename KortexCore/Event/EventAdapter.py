@@ -4,7 +4,6 @@ from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexCore.CommonUtils.Singleton import singleton as singleton
 from KortexCore.Event.Event import Event as Event
 from KortexCore.CommonUtils.JsonIO import JsonIO as JsonIO
-import EnumAndConsts.EnumsAndConsts as KortexEnums
 
 
 @singleton
@@ -35,7 +34,7 @@ class EventAdapter(object):
                                                                                parameter="event_data_file_name"))
 
         # In case the event is new, create the metadata file
-        if not path.exists(event_data_file):
+        if not JsonIO.json_file_exists(event_data_file):
             JsonIO.create_empty_file(event_data_file)
             load_existing_event = False
 
