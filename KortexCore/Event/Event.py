@@ -28,7 +28,6 @@ class Event(object):
                            }
         self._fileFactory = file_factory
 
-
     @property
     def files(self):
         return self._dir.functional_files
@@ -38,6 +37,8 @@ class Event(object):
         return {name: _dir.get_event() for name, _dir in self._dir.directories.items()}
 
     def set_current_date_time(self):
+        """
+        """
         start_dt, end_dt = self._date_time_handler.get_default_date_time()
         self._prop_objs[EPropertyType.START_DATE_AND_TIME].assign(start_dt)
         self._prop_objs[EPropertyType.END_DATE_AND_TIME].assign(end_dt)
