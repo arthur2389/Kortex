@@ -1,5 +1,5 @@
 import json
-
+from os import path
 
 def json_io_method(func):
     def add_json_suffix(*args, **kwargs):
@@ -17,6 +17,11 @@ class JsonIO(object):
     """
 
     parsed_data = {}
+
+    @staticmethod
+    @json_io_method
+    def json_file_exists(file_path):
+        return path.exists(file_path)
 
     @staticmethod
     @json_io_method

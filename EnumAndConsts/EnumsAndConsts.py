@@ -16,14 +16,6 @@ class EPropertyType(Enum):
     DURATION = 7
 
 
-class Importance(Enum):
-    TRIVIAL = 1
-    LOW = 2
-    MEDIUM = 3
-    HIGH = 4
-    VERY_HIGH = 5
-
-
 class ETimeInterval(Enum):
     SECOND = 1
     MINUTE = 2

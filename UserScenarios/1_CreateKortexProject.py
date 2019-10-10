@@ -27,7 +27,7 @@ f3 = kortex_core.create_event("Feature3")
 f4 = kortex_core.create_event("Feature4")
 
 f1[KortexEnums.EPropertyType.IMAGE] = PropertyArgs(img_path=image1)
-f1[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance=KortexEnums.Importance.HIGH)
+f1[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance="high")
 f1.import_file(path=audio1)
 
 f2[KortexEnums.EPropertyType.IMAGE] = PropertyArgs(img_path=image2)
@@ -64,9 +64,9 @@ n112 = kortex_core.create_event("Nested112", holding_event=n11)
 n113 = kortex_core.create_event("Nested113", holding_event=n11)
 n114 = kortex_core.create_event("Nested114", holding_event=n11)
 
-n111[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance=KortexEnums.Importance.HIGH)
-n112[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance=KortexEnums.Importance.HIGH)
-n113[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance=KortexEnums.Importance.MEDIUM)
+n111[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance="high")
+n112[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance="very high")
+n113[KortexEnums.EPropertyType.IMPORTANCE] = PropertyArgs(importance="medium")
 
 importance_sorted = n11.get_event_list(sort_by=KortexEnums.EPropertyType.IMPORTANCE)
 
