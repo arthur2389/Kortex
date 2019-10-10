@@ -224,12 +224,11 @@ class CashFlow(QuantifiableProperty):
         Assign new money balance value
         param: propArgs: argument object that holds moneyBalance field (KortexKoreInterface.PropertyArgs)
         """
-        self._cash_flow = int(assign_args.cash_flow)
+        self._cash_flow = assign_args.cash_flow
         super(CashFlow, self).assign(assign_args=assign_args.cash_flow)
 
     def get(self):
         """
-        return: money balamce value (int)
         """
         return self._cash_flow
 

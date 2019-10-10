@@ -119,6 +119,7 @@ class NewEventWindow(MainWindowDialog):
 
         name_layout, self._name_entry = self._entry(label="Event name: ")
         cashflow_layout, self._cashflow_entry = self._entry(label="Cash flow: ")
+        self._cashflow_entry.setText("0")
         importance_layout = self._importance_entry()
 
         vlayout.addLayout(name_layout)
@@ -133,7 +134,7 @@ class NewEventWindow(MainWindowDialog):
         self._new_event = self._kortex_project.create_event(event_name=self._name_entry.text(),
                                                             holding_event=self._holding_event)
         args = PropertyArgs(importance=self._priorities.currentText(),
-                            cash_flow=self._cashflow_entry.text())
+                            cash_flow=int(self._cashflow_entry.text()))
         self._new_event[EPropertyType.IMPORTANCE] = args
         self._new_event[EPropertyType.CASH_FLOW] = args
         super(NewEventWindow, self).accept()
