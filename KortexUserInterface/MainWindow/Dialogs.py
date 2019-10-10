@@ -4,6 +4,7 @@ from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexCoreInterface.KortexCoreInterface import PropertyArgs
 from EnumAndConsts.EnumsAndConsts import EPropertyType
 
+
 class MainWindowDialog(QDialog):
 
     def __init__(self, parent):

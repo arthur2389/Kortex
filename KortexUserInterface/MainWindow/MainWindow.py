@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+
 from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface
 from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexUserInterface.MainWindow.Dialogs import LoadProjectWindow, NewProjectWindow, NewEventWindow
-from KortexUserInterface.MainWindow.TreeItem import KortexTreeItem
+from KortexUserInterface.MainWindow.MainTree import MainTree
 
 
 class KortexMainWindow(QMainWindow):
@@ -22,11 +23,30 @@ class KortexMainWindow(QMainWindow):
         self._data_moderator = DataModerator()
         self.window_sizes = \
             KortexMainWindow.WindowSizes(sizes=self._data_moderator.get_data(group="main_window_sizes"))
+
         self._load_project()
         self._build_main_menu()
-        self._build_tree()
+        self._main_frame()
+
         self.resize(self.window_sizes.main_window_width, self.window_sizes.main_window_height)
+        self.statusBar()
         self.show()
+
+    def _main_frame(self):
+        self._frame = QWidget()
+        self._layout = QVBoxLayout()
+        self._frame.setLayout(self._layout)
+        self.setCentralWidget(self._frame)
+        self.tree = MainTree(parent=self,
+                             window_sizes=self.window_sizes,
+                             kortex_project=self.kortex_project,
+                             data_moderator=self._data_moderator)
+        self._layout.addWidget(self.tree)
+
+    def _load_project(self):
+        prj_path, prj_name = self._data_moderator.get_current_project()
+        self.kortex_project = KortexCoreInterface(root_dir=prj_path)
+        self.setWindowTitle("Kortex " + "Project : " + prj_name)
 
     def _build_main_menu(self):
         bar = self.menuBar()
@@ -74,47 +94,12 @@ class KortexMainWindow(QMainWindow):
         _action.triggered.connect(connect_action)
         return _action
 
-    def _build_tree(self):
-        self.tree = QTreeWidget()
-        table_props = ["Event", "Start time", "End time", "Importance", "Cash flow"]
-        self.tree.setHeaderLabels(table_props)
-        self.tree.setAlternatingRowColors(True)
-
-        self._fill_tree()
-
-    def _fill_tree(self):
-        self.tree.clear()
-        base_events = self.kortex_project.root.events
-        for base_event in base_events.values():
-            item = KortexTreeItem(data_moderator=self._data_moderator,
-                                  event=base_event)
-            self._load_tree_node(item)
-            self.tree.addTopLevelItem(item)
-        self.setCentralWidget(self.tree)
-        self.tree.setColumnWidth(0, self.window_sizes.tree_column_width)
-        self.tree.setColumnWidth(1, self.window_sizes.tree_column_width)
-        self.tree.setColumnWidth(2, self.window_sizes.tree_column_width)
-
-    def _load_tree_node(self, parent_item):
-        events = parent_item.event.events
-        if len(events) > 0:
-            icon_name = "event_full.png"
-        else:
-            icon_name = "event_empty.png"
-        parent_item.setIcon(0, QIcon(self._data_moderator.get_file_path(group="main_tree", name=icon_name)))
-
-        for e in events.values():
-            item = KortexTreeItem(data_moderator=self._data_moderator, event=e)
-
-            self._load_tree_node(item)
-            parent_item.addChild(item)
-
     def _load(self):
         load_ui = LoadProjectWindow(self)
         if load_ui.exec_():
             self._data_moderator.set_current_project(load_ui.project_to_load)
             self._load_project()
-            self._fill_tree()
+            self.tree.fill(self.kortex_project)
 
     def _new(self):
         new_ui = NewProjectWindow(self)
@@ -122,20 +107,15 @@ class KortexMainWindow(QMainWindow):
             self._data_moderator.set_new_project(name=new_ui.new_project["name"],
                                                  pr_path=new_ui.new_project["path"])
             self._load_project()
-            self._fill_tree()
+            self.tree.fill(self.kortex_project)
 
     def _new_event(self):
         new_event = NewEventWindow(self, self.kortex_project)
         if new_event.exec_():
-            self._fill_tree()
+            self.tree.fill(self.kortex_project)
 
     def _open_event(self):
         print("Open event")
 
     def _remove_event(self):
         print("Remove event")
-
-    def _load_project(self):
-        prj_path, prj_name = self._data_moderator.get_current_project()
-        self.kortex_project = KortexCoreInterface(root_dir=prj_path)
-        self.setWindowTitle("Kortex " + "Project : " + prj_name)
