@@ -174,28 +174,22 @@ class Importance(QuantifiableProperty):
     """
     Event importance. Represented by KortexEnums.Importance enumeration
     """
-    to_str = {KortexEnums.Importance.TRIVIAL: "trivial",
-              KortexEnums.Importance.LOW: "low",
-              KortexEnums.Importance.MEDIUM: "medium",
-              KortexEnums.Importance.HIGH: "high",
-              KortexEnums.Importance.VERY_HIGH: "very high"}
-
     def __init__(self, dir_path):
         """
         Default importance is set to trivial
         """
         super(Importance, self).__init__(dir_path)
-        self._importance = KortexEnums.Importance.TRIVIAL
+        self._metrics = self._data_moderator.get_data(group="event_properties",
+                                                      parameter="importance_metrics")
+        self._importance = "trivial"
 
     def assign(self, assign_args, **kwargs):
         """
         Assign new importance value
         param: propArgs: argument object that holds importance field (KortexKoreInterface.PropertyArgs)
         """
-        if not isinstance(assign_args.importance, KortexEnums.Importance):
-            raise TypeError
         self._importance = assign_args.importance
-        super(Importance, self).assign(assign_args=assign_args.importance.name)
+        super(Importance, self).assign(assign_args=assign_args.importance)
 
     def get(self):
         """
@@ -208,20 +202,12 @@ class Importance(QuantifiableProperty):
         Cast to integer by taking the value of the enumeration
         return: importance value (int)
         """
-        return self._importance.value
-
-    def __str__(self):
-        """
-        Debug method to represent the importance
-        """
-        return self.to_str[self._importance]
+        return self._metrics[self._importance]
 
     def _set_desc(self, desc_str):
         """
-        Load importance from file to object by convertig string to KortexEnums.Importance enum
-        param: descStr: loaded importance from file (str)
         """
-        self._importance = getattr(KortexEnums.Importance, desc_str)
+        self._importance = desc_str
 
 
 class CashFlow(QuantifiableProperty):

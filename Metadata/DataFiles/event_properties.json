@@ -1,0 +1,12 @@
+{
+  "importance_names_and_icons" : {"trivial": "trivial_priority.png",
+                                  "low": "low_priority.png",
+                                  "medium": "medium_priority.png",
+                                  "high": "high_priority.png",
+                                  "very high": "very_high_priority.png"},
+  "importance_metrics" : {"trivial": 0,
+                          "low": 1,
+                          "medium": 2,
+                          "high": 3,
+                          "very high": 5}
+}

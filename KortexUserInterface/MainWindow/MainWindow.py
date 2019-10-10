@@ -5,7 +5,7 @@ from PyQt5.QtGui import *
 from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface
 from KortexCore.CommonUtils.DataModerator import DataModerator
 from EnumAndConsts.EnumsAndConsts import EPropertyType
-from KortexUserInterface.MainWindow.Dialogs import LoadProjectWindow, NewProjectWindow
+from KortexUserInterface.MainWindow.Dialogs import LoadProjectWindow, NewProjectWindow, NewEventWindow
 
 tree_item = namedtuple('tree_item', ('item', 'event'))
 
@@ -32,6 +32,8 @@ class KortexMainWindow(QMainWindow):
         self._data_moderator = DataModerator()
         self.window_sizes = \
             KortexMainWindow.WindowSizes(sizes=self._data_moderator.get_data(group="main_window_sizes"))
+        self.importance_icons = self._data_moderator.get_data(group="event_properties",
+                                                              parameter="importance_names_and_icons")
         self._load_project()
         self._build_main_menu()
         self._build_tree()
@@ -42,53 +44,47 @@ class KortexMainWindow(QMainWindow):
         bar = self.menuBar()
         file = bar.addMenu("&File")
 
-        _load_project = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="open.png")),
-                                "Load project", self)
-        _load_project.setShortcut('Ctrl+W')
-        _load_project.setStatusTip('Load existing project')
-        _load_project.triggered.connect(self._load)
-        file.addAction(_load_project)
-
-        _new_project = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="new.png")),
-                               "New project", self)
-        _new_project.setShortcut('Ctrl+N')
-        _new_project.setStatusTip('Create new project')
-        _new_project.triggered.connect(self._new)
-        file.addAction(_new_project)
-
+        file.addActions([self._action(name="New project",
+                                      icon="new.png",
+                                      shortcut="Ctrl+N",
+                                      status_tip="Create new project",
+                                      connect_action=self._new),
+                         self._action(name="Load project",
+                                      icon="open.png",
+                                      shortcut="Ctrl+W",
+                                      status_tip="Load existing project",
+                                      connect_action=self._load)])
         file.addSeparator()
-
-        _exit = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name="exit.png")),
-                        "Exit", self)
-        _exit.setShortcut('Ctrl+Q')
-        _exit.setStatusTip('Exit application')
-        _exit.triggered.connect(self.close)
-        file.addAction(_exit)
+        file.addActions([self._action(name="Exit",
+                                      icon="exit.png",
+                                      shortcut="Ctrl+Q",
+                                      status_tip="Exit application",
+                                      connect_action=self.close)])
 
         event = bar.addMenu("Event")
-        _new_event = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu",
-                                                                      name="new_event.png")),
-                             "New event", self)
-        _new_event.setShortcut('Ctrl+E+N')
-        _new_event.setStatusTip('Create new event')
-        _new_event.triggered.connect(self._new_event)
-        event.addAction(_new_event)
+        event.addActions([self._action(name="New event",
+                                       icon="new_event.png",
+                                       shortcut="Ctrl+E+N",
+                                       status_tip="Create new event",
+                                       connect_action=self._new_event),
+                          self._action(name="Open event",
+                                       icon="open_event.png",
+                                       shortcut="Ctrl+E+O",
+                                       status_tip="Open existing event",
+                                       connect_action=self._open_event),
+                          self._action(name="Remove event",
+                                       icon="remove_event.png",
+                                       shortcut="Ctrl+E+W",
+                                       status_tip="Delete event",
+                                       connect_action=self._remove_event)])
 
-        _open_event = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu",
-                                                                       name="open_event.png")),
-                              "Open event", self)
-        _open_event.setShortcut('Ctrl+E+O')
-        _open_event.setStatusTip('Open existing event')
-        _open_event.triggered.connect(self._open_event)
-        event.addAction(_open_event)
-
-        _remove_event = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu",
-                                                                         name="remove_event.png")),
-                                      "Remove event", self)
-        _remove_event.setShortcut('Ctrl+E+W')
-        _remove_event.setStatusTip('Delete event')
-        _remove_event.triggered.connect(self._remove_event)
-        event.addAction(_remove_event)
+    def _action(self, name, icon, shortcut, status_tip, connect_action):
+        _action = QAction(QIcon(self._data_moderator.get_file_path(group="main_menu", name=icon)),
+                          name, self)
+        _action.setShortcut(shortcut)
+        _action.setStatusTip(status_tip)
+        _action.triggered.connect(connect_action)
+        return _action
 
     def _build_tree(self):
         self.tree = QTreeWidget()
@@ -162,7 +158,9 @@ class KortexMainWindow(QMainWindow):
             self._fill_tree()
 
     def _new_event(self):
-        print("New event")
+        new_event = NewEventWindow(self, self.kortex_project)
+        if new_event.exec_():
+            self._fill_tree()
 
     def _open_event(self):
         print("Open event")
