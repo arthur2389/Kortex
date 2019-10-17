@@ -14,7 +14,23 @@ class BadEventName(KortexError):
     @staticmethod
     @abc.abstractmethod
     def message():
-        return "Event name is not suitable"
+        return "Event name cannot contain any of the following [* /, \, :, |]"
+
+
+class DoubleEventName(KortexError):
+
+    @staticmethod
+    @abc.abstractmethod
+    def message():
+        return "Event with similar name already exists"
+
+
+class EventNotFound(KortexError):
+
+    @staticmethod
+    @abc.abstractmethod
+    def message():
+        return "Event does not exists in project"
 
 
 class BadInput(KortexError):

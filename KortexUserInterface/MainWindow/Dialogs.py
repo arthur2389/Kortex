@@ -6,15 +6,14 @@ from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexCoreInterface.KortexCoreInterface import PropertyArgs
 from EnumAndConsts.EnumsAndConsts import EPropertyType
 from KortexUserInterface.ExceptionHandler import ExceptionHandler
-from KortexCore.Exception.Exception import *
 
 
 class MainWindowDialog(QDialog):
 
-    def __init__(self, parent, excs):
+    def __init__(self, parent):
         super(MainWindowDialog, self).__init__(parent=parent)
         self._data_moderator = DataModerator()
-        self.excs_handler = ExceptionHandler(excs)
+        self.excs_handler = ExceptionHandler()
 
     def _entry(self, label):
         layout = QHBoxLayout()
@@ -42,7 +41,7 @@ class MainWindowDialog(QDialog):
 class LoadProjectWindow(MainWindowDialog):
 
     def __init__(self, parent):
-        super(LoadProjectWindow, self).__init__(parent=parent, excs=None)
+        super(LoadProjectWindow, self).__init__(parent=parent)
         self._project_to_load = None
         self._names = None
         self.setLayout(self._build_layout())
@@ -64,7 +63,7 @@ class LoadProjectWindow(MainWindowDialog):
 
     def accept(self):
         self._project_to_load = self._names.currentText()
-        super(LoadProjectWindow, self).accept()
+        QDialog.accept(self)
 
     def _accept(self):
         pass
@@ -73,7 +72,7 @@ class LoadProjectWindow(MainWindowDialog):
 class NewProjectWindow(MainWindowDialog):
 
     def __init__(self, parent):
-        super(NewProjectWindow, self).__init__(parent=parent, excs=None)
+        super(NewProjectWindow, self).__init__(parent=parent)
         self._name_entry = self._path_entry = None
         self._new_project = {"name": None, "path": None}
         self.setLayout(self._build_layout())
@@ -97,7 +96,7 @@ class NewProjectWindow(MainWindowDialog):
     def accept(self):
         self._new_project["name"] = self._name_entry.text()
         self._new_project["path"] = self._path_entry.text()
-        super(NewProjectWindow, self).accept()
+        QDialog.accept(self)
 
     def _accept(self):
         pass
@@ -106,7 +105,7 @@ class NewProjectWindow(MainWindowDialog):
 class NewEventWindow(MainWindowDialog):
 
     def __init__(self, parent, kortex_project, holding_event=None):
-        super(NewEventWindow, self).__init__(parent=parent, excs=(BadEventName, BadDateTime))
+        super(NewEventWindow, self).__init__(parent=parent)
         self._new_event = None
         self._name_entry = self._priorities = None
         self._prj = kortex_project

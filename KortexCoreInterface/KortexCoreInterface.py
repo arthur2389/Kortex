@@ -49,7 +49,7 @@ class KortexCoreInterface(object):
 
         # Check if event name already exists
         if event_name in self._all_events:
-            raise BadEventName
+            raise DoubleEventName
 
         # Assign holding event. Default is the root event
         holding_event = holding_event or self._project.get_event()

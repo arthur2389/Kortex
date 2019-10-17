@@ -1,10 +1,11 @@
+from KortexCore.Exception.Exception import KortexError
 from PyQt5.QtWidgets import *
 
 
 class ExceptionHandler(object):
 
-    def __init__(self, excs):
-        self.excs = excs
+    def __init__(self):
+        self.excs = tuple(KortexError.__subclasses__())
 
     def try_execute(self, procedure, *args, **kwargs):
         try:
@@ -15,3 +16,4 @@ class ExceptionHandler(object):
             exc_msg.setText(e.message())
             exc_msg.setStandardButtons(QMessageBox.Ok)
             exc_msg.exec_()
+            return e
