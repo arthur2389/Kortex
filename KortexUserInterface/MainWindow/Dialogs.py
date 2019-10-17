@@ -1,15 +1,20 @@
+import abc
+
 from PyQt5.QtWidgets import *
 
 from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexCoreInterface.KortexCoreInterface import PropertyArgs
 from EnumAndConsts.EnumsAndConsts import EPropertyType
+from KortexUserInterface.ExceptionHandler import ExceptionHandler
+from KortexCore.Exception.Exception import *
 
 
 class MainWindowDialog(QDialog):
 
-    def __init__(self, parent):
+    def __init__(self, parent, excs):
         super(MainWindowDialog, self).__init__(parent=parent)
         self._data_moderator = DataModerator()
+        self.excs_handler = ExceptionHandler(excs)
 
     def _entry(self, label):
         layout = QHBoxLayout()
@@ -26,11 +31,18 @@ class MainWindowDialog(QDialog):
         button_box.rejected.connect(self.reject)
         return button_box
 
+    def accept(self):
+        self.excs_handler.try_execute(self._accept)
+
+    @abc.abstractmethod
+    def _accept(self):
+        pass
+
 
 class LoadProjectWindow(MainWindowDialog):
 
     def __init__(self, parent):
-        super(LoadProjectWindow, self).__init__(parent=parent)
+        super(LoadProjectWindow, self).__init__(parent=parent, excs=None)
         self._project_to_load = None
         self._names = None
         self.setLayout(self._build_layout())
@@ -54,11 +66,14 @@ class LoadProjectWindow(MainWindowDialog):
         self._project_to_load = self._names.currentText()
         super(LoadProjectWindow, self).accept()
 
+    def _accept(self):
+        pass
+
 
 class NewProjectWindow(MainWindowDialog):
 
     def __init__(self, parent):
-        super(NewProjectWindow, self).__init__(parent=parent)
+        super(NewProjectWindow, self).__init__(parent=parent, excs=None)
         self._name_entry = self._path_entry = None
         self._new_project = {"name": None, "path": None}
         self.setLayout(self._build_layout())
@@ -84,14 +99,17 @@ class NewProjectWindow(MainWindowDialog):
         self._new_project["path"] = self._path_entry.text()
         super(NewProjectWindow, self).accept()
 
+    def _accept(self):
+        pass
+
 
 class NewEventWindow(MainWindowDialog):
 
     def __init__(self, parent, kortex_project, holding_event=None):
-        super(NewEventWindow, self).__init__(parent=parent)
+        super(NewEventWindow, self).__init__(parent=parent, excs=(BadEventName, BadDateTime))
         self._new_event = None
         self._name_entry = self._priorities = None
-        self._kortex_project = kortex_project
+        self._prj = kortex_project
         self._holding_event = holding_event
         self.setLayout(self._build_layout())
 
@@ -131,11 +149,11 @@ class NewEventWindow(MainWindowDialog):
 
         return vlayout
 
-    def accept(self):
-        self._new_event = self._kortex_project.create_event(event_name=self._name_entry.text(),
-                                                            holding_event=self._holding_event)
+    def _accept(self):
+        self._new_event = self._prj.create_event(event_name=self._name_entry.text(),
+                                                 holding_event=self._holding_event)
         args = PropertyArgs(importance=self._priorities.currentText(),
                             cash_flow=int(self._cashflow_entry.text()))
         self._new_event[EPropertyType.IMPORTANCE] = args
         self._new_event[EPropertyType.CASH_FLOW] = args
-        super(NewEventWindow, self).accept()
+        QDialog.accept(self)

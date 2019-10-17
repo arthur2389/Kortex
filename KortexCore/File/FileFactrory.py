@@ -4,7 +4,7 @@ from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexCore.File.Directory import Directory
 from KortexCore.File.FunctionalFile import FunctionalFile
 from KortexCore.Event.EventAdapter import EventAdapter
-
+from KortexCore.Exception.Exception import *
 
 @singleton
 class FileFactory(object):
@@ -45,7 +45,10 @@ class FileFactory(object):
 
         # Create the directory in file system if it doesn't exists
         if not path.exists(path_file):
-            makedirs(path_file)
+            try:
+                makedirs(path_file)
+            except OSError:
+                raise BadEventName
 
         # Create directory object, create an event and pair them
         _dir = Directory(name=path.basename(path_file),

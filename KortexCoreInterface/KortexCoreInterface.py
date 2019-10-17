@@ -1,5 +1,6 @@
 from os import path
 from KortexCore.File.FileFactrory import FileFactory as FileFactory
+from KortexCore.Exception.Exception import *
 
 
 class KortexCoreInterface(object):
@@ -7,6 +8,9 @@ class KortexCoreInterface(object):
     """
     Interface class for Kortex core (engine) operations.
     """
+    roots = {}
+    events = {}
+
     def __init__(self, root_dir):
         """
         Create interface instance as well as a new project
@@ -16,12 +20,20 @@ class KortexCoreInterface(object):
 
         # Create main utils and initialize the project
         self._file_factory = FileFactory()
-        self._project = self._file_factory.generate_directory(root_dir)
+        if root_dir in self.roots:
+            self._project = self.roots[root_dir]
+            self._all_events = self.events[self._project]
+        else:
+            self._project = self._file_factory.generate_directory(root_dir)
 
-        # Map and store all the event names
-        all_dirs = []
-        self._project.get_all_directories(dir_list=all_dirs)
-        self._all_events = list(map(lambda _dir: _dir.name, all_dirs))
+            # Map and store all the event names
+            all_dirs = []
+            self._project.get_all_directories(dir_list=all_dirs)
+            self._all_events = list(map(lambda _dir: _dir.name, all_dirs))
+
+            # Update the loaded projects and events tables
+            self.roots.update({root_dir: self._project})
+            self.events.update({self._project: self._all_events})
 
     @property
     def root(self):
@@ -37,7 +49,7 @@ class KortexCoreInterface(object):
 
         # Check if event name already exists
         if event_name in self._all_events:
-            raise NotImplementedError
+            raise BadEventName
 
         # Assign holding event. Default is the root event
         holding_event = holding_event or self._project.get_event()

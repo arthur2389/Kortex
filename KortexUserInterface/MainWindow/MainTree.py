@@ -56,12 +56,15 @@ class MainTree(QTreeWidget):
     def _drop_menu(self):
         rc_menu = QMenu(self)
         event_name = self._picked_item.event.get_name()
-        open_in_location = QAction("Open location of {}".format(event_name), self)
+        open_in_location = QAction("Open location of '{}'".format(event_name), self)
         open_in_location.triggered.connect(self._open_in_location)
-        add_event = QAction("Add event to {}".format(event_name), self)
+        add_event = QAction("Add event to '{}'".format(event_name), self)
         add_event.triggered.connect(self._add_event)
         rc_menu.addAction(add_event)
         rc_menu.addAction(open_in_location)
+        font = QFont()
+        font.setPointSize(8)
+        rc_menu.setFont(font)
         return rc_menu
 
     def _open_in_location(self):
