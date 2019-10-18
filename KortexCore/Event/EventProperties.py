@@ -4,7 +4,6 @@ from os import path
 from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexCore.File.FunctionalFile import FunctionalFile
 from KortexCore.CommonUtils.JsonIO import JsonIO
-import EnumAndConsts.EnumsAndConsts as KortexEnums
 
 
 class PropertyBase(object):

@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface
 from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexUserInterface.MainWindow.Dialogs import LoadProjectWindow, NewProjectWindow, NewEventWindow
-from KortexUserInterface.MainWindow.MainTree import MainTree
+from KortexUserInterface.KortexWidgets.MainTree import MainTree
 
 
 class KortexMainWindow(QMainWindow):
@@ -104,8 +104,6 @@ class KortexMainWindow(QMainWindow):
     def _new(self):
         new_ui = NewProjectWindow(self)
         if new_ui.exec_():
-            self._data_moderator.set_new_project(name=new_ui.new_project["name"],
-                                                 pr_path=new_ui.new_project["path"])
             self._load_project()
             self.tree.fill(self.kortex_project)
 

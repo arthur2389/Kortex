@@ -1,8 +1,8 @@
 import datetime
 
 from KortexCore.CommonUtils.Singleton import singleton
+from KortexCore.Exception.Exception import *
 from EnumAndConsts.EnumsAndConsts import ETimeInterval
-
 
 @singleton
 class DateTimeHandler(object):
@@ -22,7 +22,7 @@ class DateTimeHandler(object):
         """
         """
         if not start and not end:
-            raise ValueError
+            raise BadInput
         elif end and not start:
             end_dt = self.get_date_time(day=end.day, month=end.month, year=end.year,
                                         hour=end.hour, minute=end.minute)
@@ -38,7 +38,7 @@ class DateTimeHandler(object):
                                         hour=end.hour, minute=end.minute)
 
         if self.time_length(end_dt) < self.time_length(start_dt):
-            raise ValueError
+            raise BadDateTime
         return start_dt, end_dt
 
     def get_date_time(self, day, month, year, hour, minute):
