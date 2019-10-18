@@ -48,9 +48,13 @@ class MainTree(QTreeWidget):
 
     def mousePressEvent(self, QMouseEvent):
         if QMouseEvent.button() == Qt.RightButton:
-            self._picked_item = self.itemAt(QMouseEvent.pos().y(), QMouseEvent.pos().y())
-            self.rc_menu = self._drop_menu()
-            self.rc_menu.popup(QCursor.pos() + QPoint(15, 0))
+            try:
+                self._picked_item = self.itemAt(QMouseEvent.pos().y(), QMouseEvent.pos().y())
+                self.rc_menu = self._drop_menu()
+                self.rc_menu.popup(QCursor.pos() + QPoint(15, 0))
+            # Catch exception in case user right clicked the tree in place with no item
+            except Exception:
+                pass
         super(MainTree, self).mousePressEvent(QMouseEvent)
 
     def _drop_menu(self):

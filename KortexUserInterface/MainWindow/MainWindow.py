@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface
 from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexUserInterface.MainWindow.Dialogs import LoadProjectWindow, NewProjectWindow, NewEventWindow
-from KortexUserInterface.MainWindow.MainTree import MainTree
+from KortexUserInterface.KortexWidgets.MainTree import MainTree
 
 
 class KortexMainWindow(QMainWindow):

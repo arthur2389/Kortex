@@ -1,121 +1,13 @@
-import abc
-import os
-
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 
-from KortexCore.CommonUtils.DataModerator import DataModerator
+from KortexUserInterface.KortexWidgets.KortexDialog import KortexDialog
 from KortexCoreInterface.KortexCoreInterface import PropertyArgs
 from EnumAndConsts.EnumsAndConsts import EPropertyType
-from KortexUserInterface.ExceptionHandler import get_handler
 from KortexCore.Exception.Exception import *
 
 
-class MainWindowDialog(QDialog):
-
-    def __init__(self, parent):
-        super(MainWindowDialog, self).__init__(parent=parent)
-        self._data_moderator = DataModerator()
-        self.excs_handler = get_handler()
-
-    def _entry(self, label):
-        layout = QHBoxLayout()
-        label = QLabel(label)
-        entry = QLineEdit()
-        layout.addWidget(label)
-        layout.addWidget(entry)
-        return layout, entry
-
-    def _get_dialog_buttons(self):
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok|
-                                      QDialogButtonBox.Cancel)
-        button_box.accepted.connect(self.accept)
-        button_box.rejected.connect(self.reject)
-        return button_box
-
-    def accept(self):
-        self.excs_handler.try_execute(self._accept)
-
-    @abc.abstractmethod
-    def _accept(self):
-        pass
-
-    def _is_valid_path(self, _path):
-        return os.path.exists(_path) or os.access(os.path.dirname(_path), os.W_OK)
-
-    def _is_valid_name(self, name):
-        return not any((s in name) for s in ["*", "/", "|", "?"])
-
-    def _inserted(self, field):
-        return field != ""
-
-
-class LoadProjectWindow(MainWindowDialog):
-
-    def __init__(self, parent):
-        super(LoadProjectWindow, self).__init__(parent=parent)
-        self._project_to_load = None
-        self._names = None
-        self.setLayout(self._build_layout())
-
-    @property
-    def project_to_load(self):
-        return self._project_to_load
-
-    def _build_layout(self):
-        vlayout = QVBoxLayout()
-
-        self._names = QComboBox()
-        self._names.addItems(self._data_moderator.projectnames)
-
-        vlayout.addWidget(self._names)
-        vlayout.addWidget(self._get_dialog_buttons())
-
-        return vlayout
-
-    def accept(self):
-        self._project_to_load = self._names.currentText()
-        QDialog.accept(self)
-
-    def _accept(self):
-        pass
-
-
-class NewProjectWindow(MainWindowDialog):
-
-    def __init__(self, parent):
-        super(NewProjectWindow, self).__init__(parent=parent)
-        self._name_entry = self._path_entry = None
-        self.setLayout(self._build_layout())
-
-    def _build_layout(self):
-        vlayout = QVBoxLayout()
-
-        name_layout, self._name_entry = self._entry(label="New project name: ")
-        path_layout, self._path_entry = self._entry(label="New project location: ")
-
-        vlayout.addLayout(name_layout)
-        vlayout.addLayout(path_layout)
-        vlayout.addWidget(self._get_dialog_buttons())
-
-        return vlayout
-
-    def _accept(self):
-        name = self._name_entry.text()
-        _path = self._path_entry.text()
-        if not self._inserted(name):
-            raise EmptyEventName
-        if not self._inserted(_path):
-            raise EmptyEventName
-        if not self._is_valid_name(name):
-            raise BadEventName
-        if not self._is_valid_path(_path):
-            raise InvalidPath
-        self._data_moderator.set_new_project(name=name,
-                                             pr_path=_path)
-        QDialog.accept(self)
-
-
-class NewEventWindow(MainWindowDialog):
+class NewEventWindow(KortexDialog):
 
     def __init__(self, parent, kortex_project, holding_event=None):
         super(NewEventWindow, self).__init__(parent=parent)
@@ -148,7 +40,7 @@ class NewEventWindow(MainWindowDialog):
     def _build_layout(self):
         vlayout = QVBoxLayout()
 
-        name_layout, self._name_entry = self._entry(label="Event name: ")
+        name_layout, self._name_entry = self._entry(label="Event name: ", mandatory=True)
         cashflow_layout, self._cashflow_entry = self._entry(label="Cash flow: ")
         self._cashflow_entry.setText("0")
         importance_layout = self._importance_entry()
@@ -166,8 +58,8 @@ class NewEventWindow(MainWindowDialog):
         cash_flow = self._cashflow_entry.text()
         name = self._name_entry.text()
         priority = self._priorities.currentText()
-        if not self._inserted(name):
-            raise EmptyEventName
+        self._assert_inserted([name])
+
         if not self._is_valid_name(name):
             raise BadEventName
         try:
@@ -180,4 +72,80 @@ class NewEventWindow(MainWindowDialog):
         args = PropertyArgs(importance=priority, cash_flow=cash_flow)
         self._new_event[EPropertyType.IMPORTANCE] = args
         self._new_event[EPropertyType.CASH_FLOW] = args
+        QDialog.accept(self)
+
+
+class LoadProjectWindow(KortexDialog):
+
+    def __init__(self, parent):
+        super(LoadProjectWindow, self).__init__(parent=parent)
+        self._project_to_load = None
+        self._names = None
+        self.setLayout(self._build_layout())
+
+    @property
+    def project_to_load(self):
+        return self._project_to_load
+
+    def _build_layout(self):
+        vlayout = QVBoxLayout()
+
+        self._names = QComboBox()
+        self._names.addItems(self._data_moderator.projectnames)
+
+        vlayout.addWidget(self._names)
+        vlayout.addWidget(self._get_dialog_buttons())
+
+        return vlayout
+
+    def accept(self):
+        self._project_to_load = self._names.currentText()
+        QDialog.accept(self)
+
+    def _accept(self):
+        pass
+
+
+class NewProjectWindow(KortexDialog):
+
+    def __init__(self, parent):
+        super(NewProjectWindow, self).__init__(parent=parent)
+        self._name_entry = self._path_entry = None
+        self.setLayout(self._build_layout())
+        self.setWindowTitle("Create new project")
+
+    def _build_layout(self):
+        vlayout = QVBoxLayout()
+
+        name_layout, self._name_entry = self._entry(label="New project name: ", mandatory=True)
+        path_layout, self._path_entry = self._entry(label="Location: ", mandatory=True)
+        path_input = QPushButton()
+        path_input.setText("Select location")
+        path_input.setIcon(QIcon(self._data_moderator.get_file_path(group="main_dialogs", name="open")))
+        path_input.clicked.connect(self._path_input)
+        path_layout.addWidget(path_input)
+
+        vlayout.addLayout(name_layout)
+        vlayout.addLayout(path_layout)
+        vlayout.addWidget(self._get_dialog_buttons())
+
+        return vlayout
+
+    def _path_input(self):
+        self._path = QFileDialog.getExistingDirectory(parent=self,
+                                                      caption="Select location for new project")
+        if self._path:
+            self._path_entry.setText(self._path)
+
+    def _accept(self):
+        name = self._name_entry.text()
+        _path = self._path_entry.text()
+        self._assert_inserted([name, _path])
+
+        if not self._is_valid_name(name):
+            raise BadEventName
+        if not self._is_valid_path(_path):
+            raise InvalidPath
+        self._data_moderator.set_new_project(name=name,
+                                             pr_path=_path)
         QDialog.accept(self)

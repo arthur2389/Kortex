@@ -17,12 +17,12 @@ class BadEventName(KortexError):
         return "Event name cannot contain any of the following [* /, \, :, |]"
 
 
-class EmptyEventName(KortexError):
+class EmptyField(KortexError):
 
     @staticmethod
     @abc.abstractmethod
     def message():
-        return "Event name field cannot be left empty"
+        return "Please fill all mandatory fields"
 
 
 class DoubleEventName(KortexError):
