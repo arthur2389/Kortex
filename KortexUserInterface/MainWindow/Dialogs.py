@@ -1,11 +1,13 @@
 import abc
+import os
 
 from PyQt5.QtWidgets import *
 
 from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexCoreInterface.KortexCoreInterface import PropertyArgs
 from EnumAndConsts.EnumsAndConsts import EPropertyType
-from KortexUserInterface.ExceptionHandler import ExceptionHandler
+from KortexUserInterface.ExceptionHandler import get_handler
+from KortexCore.Exception.Exception import *
 
 
 class MainWindowDialog(QDialog):
@@ -13,7 +15,7 @@ class MainWindowDialog(QDialog):
     def __init__(self, parent):
         super(MainWindowDialog, self).__init__(parent=parent)
         self._data_moderator = DataModerator()
-        self.excs_handler = ExceptionHandler()
+        self.excs_handler = get_handler()
 
     def _entry(self, label):
         layout = QHBoxLayout()
@@ -36,6 +38,15 @@ class MainWindowDialog(QDialog):
     @abc.abstractmethod
     def _accept(self):
         pass
+
+    def _is_valid_path(self, _path):
+        return os.path.exists(_path) or os.access(os.path.dirname(_path), os.W_OK)
+
+    def _is_valid_name(self, name):
+        return not any((s in name) for s in ["*", "/", "|", "?"])
+
+    def _inserted(self, field):
+        return field != ""
 
 
 class LoadProjectWindow(MainWindowDialog):
@@ -74,12 +85,7 @@ class NewProjectWindow(MainWindowDialog):
     def __init__(self, parent):
         super(NewProjectWindow, self).__init__(parent=parent)
         self._name_entry = self._path_entry = None
-        self._new_project = {"name": None, "path": None}
         self.setLayout(self._build_layout())
-
-    @property
-    def new_project(self):
-        return self._new_project
 
     def _build_layout(self):
         vlayout = QVBoxLayout()
@@ -93,13 +99,20 @@ class NewProjectWindow(MainWindowDialog):
 
         return vlayout
 
-    def accept(self):
-        self._new_project["name"] = self._name_entry.text()
-        self._new_project["path"] = self._path_entry.text()
-        QDialog.accept(self)
-
     def _accept(self):
-        pass
+        name = self._name_entry.text()
+        _path = self._path_entry.text()
+        if not self._inserted(name):
+            raise EmptyEventName
+        if not self._inserted(_path):
+            raise EmptyEventName
+        if not self._is_valid_name(name):
+            raise BadEventName
+        if not self._is_valid_path(_path):
+            raise InvalidPath
+        self._data_moderator.set_new_project(name=name,
+                                             pr_path=_path)
+        QDialog.accept(self)
 
 
 class NewEventWindow(MainWindowDialog):
@@ -149,10 +162,22 @@ class NewEventWindow(MainWindowDialog):
         return vlayout
 
     def _accept(self):
-        self._new_event = self._prj.create_event(event_name=self._name_entry.text(),
-                                                 holding_event=self._holding_event)
-        args = PropertyArgs(importance=self._priorities.currentText(),
-                            cash_flow=int(self._cashflow_entry.text()))
+        # Check input
+        cash_flow = self._cashflow_entry.text()
+        name = self._name_entry.text()
+        priority = self._priorities.currentText()
+        if not self._inserted(name):
+            raise EmptyEventName
+        if not self._is_valid_name(name):
+            raise BadEventName
+        try:
+            cash_flow = int(cash_flow)
+        except Exception:
+            raise CashFlowNotInt
+
+        # Build new event
+        self._new_event = self._prj.create_event(event_name=name, holding_event=self._holding_event)
+        args = PropertyArgs(importance=priority, cash_flow=cash_flow)
         self._new_event[EPropertyType.IMPORTANCE] = args
         self._new_event[EPropertyType.CASH_FLOW] = args
         QDialog.accept(self)

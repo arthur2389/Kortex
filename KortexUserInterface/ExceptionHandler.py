@@ -17,3 +17,11 @@ class ExceptionHandler(object):
             exc_msg.setStandardButtons(QMessageBox.Ok)
             exc_msg.exec_()
             return e
+
+
+excs_handler = ExceptionHandler()
+
+
+def get_handler():
+    global excs_handler
+    return excs_handler

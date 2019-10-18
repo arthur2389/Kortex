@@ -17,6 +17,14 @@ class BadEventName(KortexError):
         return "Event name cannot contain any of the following [* /, \, :, |]"
 
 
+class EmptyEventName(KortexError):
+
+    @staticmethod
+    @abc.abstractmethod
+    def message():
+        return "Event name field cannot be left empty"
+
+
 class DoubleEventName(KortexError):
 
     @staticmethod
@@ -47,3 +55,27 @@ class BadDateTime(KortexError):
     @abc.abstractmethod
     def message():
         return "Invalid date and time values"
+
+
+class ProjectAlreadyExists(KortexError):
+
+    @staticmethod
+    @abc.abstractmethod
+    def message():
+        return "Project with the same name already exists"
+
+
+class CashFlowNotInt(KortexError):
+
+    @staticmethod
+    @abc.abstractmethod
+    def message():
+        return "Please insert a valid cash flow value"
+
+
+class InvalidPath(KortexError):
+
+    @staticmethod
+    @abc.abstractmethod
+    def message():
+        return "Please insert a valid path for project root"

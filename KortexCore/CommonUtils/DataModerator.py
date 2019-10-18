@@ -3,7 +3,7 @@ import root
 
 from KortexCore.CommonUtils.JsonIO import JsonIO
 from KortexCore.CommonUtils.Singleton import singleton
-
+from KortexCore.Exception.Exception import ProjectAlreadyExists
 
 @singleton
 class DataModerator(object):
@@ -34,6 +34,8 @@ class DataModerator(object):
                      name)
 
     def set_new_project(self, name, pr_path):
+        if name in self.projects["projects"]:
+            raise ProjectAlreadyExists
         self.projects["projects"].update({name: path.join(pr_path, name)})
         JsonIO.write(path.join(self._data_files, "projects"),
                      "projects",
