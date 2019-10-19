@@ -1,6 +1,7 @@
 import abc
 from os import path
 
+from EnumAndConsts.EnumsAndConsts import ECompletionStatus as CompStatus
 from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexCore.File.FunctionalFile import FunctionalFile
 from KortexCore.CommonUtils.JsonIO import JsonIO
@@ -115,6 +116,12 @@ class DescriptionProperty(PropertyBase):
         """
         JsonIO.write(self._data_file_path, self.__class__.__name__, assign_args)
 
+    def get(self):
+        """
+        return: event's description (str)
+        """
+        return self._desc
+
     @abc.abstractmethod
     def _set_desc(self, desc_str):
         """
@@ -122,6 +129,28 @@ class DescriptionProperty(PropertyBase):
         param: descStr: description from metadata file
         """
         pass
+
+
+class CompletionStatus(DescriptionProperty):
+
+    def __init__(self, dir_path):
+        super(CompletionStatus, self).__init__(dir_path)
+        self._desc = CompStatus.NOT_COMPLETED
+
+    def assign(self, assign_args, **kwargs):
+        """
+        Assign new description
+        param: propArgs: argument object that holds description field (KortexKoreInterface.PropertyArgs)
+        """
+        self._desc = assign_args.completion_status
+        super(CompletionStatus, self).assign(assign_args=assign_args.completion_status.name)
+
+    def _set_desc(self, desc_str):
+        """
+        Assign loaded description
+        param: descStr: loaded description (str)
+        """
+        self._desc = getattr(CompStatus, desc_str)
 
 
 class Description(DescriptionProperty):

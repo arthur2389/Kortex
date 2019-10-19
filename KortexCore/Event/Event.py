@@ -20,6 +20,7 @@ class Event(object):
         self._dir = directory
         self._date_time_handler = DateTimeHandler()
         self._prop_objs = {EPropertyType.DESCRIPTION: EventProperties.Description(self._dir.path, directory.name),
+                           EPropertyType.COMPLETION_STATUS: EventProperties.CompletionStatus(self._dir.path),
                            EPropertyType.IMAGE: EventProperties.Image(self._dir.path),
                            EPropertyType.IMPORTANCE: EventProperties.Importance(self._dir.path),
                            EPropertyType.CASH_FLOW: EventProperties.CashFlow(self._dir.path),
