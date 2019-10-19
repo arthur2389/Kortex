@@ -51,7 +51,7 @@ class MainTree(QTreeWidget):
             try:
                 self._picked_item = self.itemAt(QMouseEvent.pos().y(), QMouseEvent.pos().y())
                 self.rc_menu = self._drop_menu()
-                self.rc_menu.popup(QCursor.pos() + QPoint(15, 0))
+                self.rc_menu.popup(QCursor.pos() + QPoint(self._window_sizes.rc_menu_dst, 0))
             # Catch exception in case user right clicked the tree in place with no item
             except Exception:
                 pass
@@ -67,7 +67,7 @@ class MainTree(QTreeWidget):
         rc_menu.addAction(add_event)
         rc_menu.addAction(open_in_location)
         font = QFont()
-        font.setPointSize(8)
+        font.setPointSize(self._window_sizes.rc_menu_font)
         rc_menu.setFont(font)
         return rc_menu
 
@@ -77,6 +77,7 @@ class MainTree(QTreeWidget):
     def _add_event(self):
         new = NewEventWindow(parent=self,
                              kortex_project=self._kortex_project,
+                             window_width=self._window_sizes.new_dlg_size,
                              holding_event=self._picked_item.event)
         if new.exec_():
             item = KortexTreeItem(data_moderator=self._data_moderator, event=new.new_event)
