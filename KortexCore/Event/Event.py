@@ -79,9 +79,9 @@ class Event(object):
     def set_date_time(self, start_date_time_args=None, end_date_time_args=None):
         """
         """
-        start_dt, end_dt = self._date_time_handler(curr_start=self[EPropertyType.START_DATE_AND_TIME],
-                                                   start=start_date_time_args,
-                                                   end=end_date_time_args)
+        start_dt, end_dt = self._date_time_handler.start_and_end_time(curr_start=self[EPropertyType.START_DATE_AND_TIME],
+                                                                      start=start_date_time_args,
+                                                                      end=end_date_time_args)
         self._prop_objs[EPropertyType.START_DATE_AND_TIME].assign(date_and_time=start_dt)
         self._prop_objs[EPropertyType.END_DATE_AND_TIME].assign(date_and_time=end_dt)
 
@@ -135,9 +135,9 @@ class Event(object):
         """
         """
         if erase_current:
-            file.Move(targetDir=new_event.get_directory(), new_name=new_name)
+            file.move(targetDir=new_event.get_directory(), new_name=new_name)
         else:
-            file.Copy(targetDir=new_event.get_directory(), new_name=new_name)
+            file.copy(targetDir=new_event.get_directory(), new_name=new_name)
         return file
 
     def open_file(self, file):

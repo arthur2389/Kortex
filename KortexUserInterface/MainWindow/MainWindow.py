@@ -16,6 +16,9 @@ class KortexMainWindow(QMainWindow):
             self.main_window_width = self.font_size * sizes["main_window_width_ratio"]
             self.main_window_height = self.font_size * sizes["main_window_height_ratio"]
             self.tree_column_width = self.font_size * sizes["tree_column_width_ratio"]
+            self.new_dlg_size = self.font_size * sizes["new_dlg_size_ratio"]
+            self.rc_menu_font = sizes["rc_menu_font"]
+            self.rc_menu_dst = sizes["rc_menu_dst"]
 
     def __init__(self):
         super(KortexMainWindow, self).__init__()
@@ -29,6 +32,7 @@ class KortexMainWindow(QMainWindow):
         self._main_frame()
 
         self.resize(self.window_sizes.main_window_width, self.window_sizes.main_window_height)
+        self.setWindowIcon(QIcon(self._data_moderator.get_file_path(group="main_tree", name="kortex_tree")))
         self.statusBar()
         self.show()
 
@@ -108,7 +112,9 @@ class KortexMainWindow(QMainWindow):
             self.tree.fill(self.kortex_project)
 
     def _new_event(self):
-        new_event = NewEventWindow(self, self.kortex_project)
+        new_event = NewEventWindow(parent=self,
+                                   kortex_project=self.kortex_project,
+                                   window_width=self.window_sizes.new_dlg_size)
         if new_event.exec_():
             self.tree.fill(self.kortex_project)
 
