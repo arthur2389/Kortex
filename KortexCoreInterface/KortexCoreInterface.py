@@ -36,6 +36,10 @@ class KortexCoreInterface(object):
             self.events.update({self._project: self._all_events})
 
     @property
+    def all_events(self):
+        return self._all_events
+
+    @property
     def root(self):
         return self._project.get_event()
 

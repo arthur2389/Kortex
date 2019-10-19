@@ -228,9 +228,6 @@ class LoadProjectWindow(KortexDialog):
         self._project_to_load = self._names.currentText()
         QDialog.accept(self)
 
-    def _accept(self):
-        pass
-
 
 class NewProjectWindow(KortexDialog):
 

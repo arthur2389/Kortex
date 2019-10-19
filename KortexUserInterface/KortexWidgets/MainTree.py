@@ -5,6 +5,7 @@ from EnumAndConsts.EnumsAndConsts import EPropertyType
 from EnumAndConsts.EnumsAndConsts import ECompletionStatus as CompStatus
 from KortexCoreInterface.KortexCoreInterface import PropertyArgs
 from KortexUserInterface.MainWindow.Dialogs import NewEventWindow
+from KortexUserInterface.KortexWidgets.KortexDialog import Verification, KortexDialog
 
 
 class MainTree(QTreeWidget):
@@ -46,12 +47,12 @@ class MainTree(QTreeWidget):
 
     def _set_icon_for_item(self, item, is_children):
         if item.event[EPropertyType.COMPLETION_STATUS] == CompStatus.COMPLETED:
-            icon_name = "completed.png"
+            icon_name = "completed"
         else:
             if is_children:
-                icon_name = "event_full.png"
+                icon_name = "event_full"
             else:
-                icon_name = "event_empty.png"
+                icon_name = "event_empty"
         item.setIcon(0, QIcon(self._data_moderator.get_file_path(group="main_tree", name=icon_name)))
 
     def mousePressEvent(self, QMouseEvent):
@@ -82,14 +83,34 @@ class MainTree(QTreeWidget):
             set_completion = QAction("Set '{}' not completed".format(event_name), self)
             set_completion.triggered.connect(self._toggle_completion)
 
+        remove_event = QAction("Remove '{}'".format(event_name), self)
+        remove_event.triggered.connect(self._remove_event)
+
+        move_event = QAction("Move '{}'".format(event_name), self)
+        move_event.triggered.connect(self._move_event)
+
         rc_menu.addAction(add_event)
         rc_menu.addAction(open_in_location)
         rc_menu.addAction(set_completion)
+        rc_menu.addSeparator()
+        rc_menu.addAction(remove_event)
+        rc_menu.addAction(move_event)
 
         font = QFont()
         font.setPointSize(self._window_sizes.rc_menu_font)
         rc_menu.setFont(font)
         return rc_menu
+
+    def _move_event(self):
+        move = MoveEvent(parent=self, prj=self._kortex_project, event=self._picked_item.event)
+        if move.exec_():
+            self.fill(self._kortex_project)
+
+    def _remove_event(self):
+        verification = Verification(parent=self, question="Remove {} ?".format(self._picked_item.event.get_name()))
+        if verification.exec_():
+            self._kortex_project.remove_event(self._picked_item.event)
+            self.fill(self._kortex_project)
 
     def _toggle_completion(self):
         event = self._picked_item.event
@@ -144,3 +165,35 @@ class KortexTreeItem(QTreeWidgetItem):
     @property
     def event(self):
         return self._event
+
+
+class MoveEvent(KortexDialog):
+
+    def __init__(self, parent, prj, event):
+        super(MoveEvent, self).__init__(parent=parent)
+        self._move_to = None
+        self._prj = prj
+        self._event = event
+        self.setMaximumHeight(100)
+        self.setLayout(self._build_layout())
+
+    @property
+    def move_to(self):
+        return self._move_to
+
+    def _build_layout(self):
+        vlayout = QVBoxLayout()
+        self.event_list = QListWidget()
+
+        for e_name in self._prj.all_events:
+            self.event_list.addItem(QListWidgetItem(e_name))
+        self.event_list.setCurrentRow(0)
+        vlayout.addWidget(self.event_list)
+        self._get_dialog_buttons(vlayout)
+
+        return vlayout
+
+    def _accept(self):
+        self._prj.move_event(event=self._event,
+                             target_holding_event=self._prj.get_event(self.event_list.currentItem().text()))
+        QDialog.accept(self)

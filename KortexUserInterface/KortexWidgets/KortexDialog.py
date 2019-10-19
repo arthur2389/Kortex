@@ -41,7 +41,6 @@ class KortexDialog(QDialog):
     def accept(self):
         self.excs_handler.try_execute(self._accept)
 
-    @abc.abstractmethod
     def _accept(self):
         pass
 
@@ -54,3 +53,23 @@ class KortexDialog(QDialog):
     def _assert_inserted(self, fields):
         if any(field == "" for field in fields):
             raise EmptyField
+
+
+class Verification(KortexDialog):
+
+    def __init__(self, parent, question):
+        super(Verification, self).__init__(parent=parent)
+        self.setLayout(self._build_layout(question))
+        self.setWindowTitle("Kortex")
+
+    def _build_layout(self, question):
+        vlayout = QVBoxLayout()
+        question_label = QLabel(question)
+
+        vlayout.addWidget(question_label)
+        self._get_dialog_buttons(vlayout)
+
+        return vlayout
+
+    def accept(self):
+        QDialog.accept(self)

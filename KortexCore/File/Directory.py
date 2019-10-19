@@ -4,6 +4,7 @@ import subprocess
 
 from KortexCore.File.File import File as File
 from EnumAndConsts.EnumsAndConsts import EFileType as EFileType
+from KortexCore.Exception.Exception import BadEventMove
 
 
 class Directory(File):
@@ -91,7 +92,7 @@ class Directory(File):
         # Assert that target directory is not nested inside moved directory
         found_dir = self.find_directory(target_dir.name)
         if found_dir:
-            raise NotImplementedError
+            raise BadEventMove
 
         # Remove the object from the list of directories in the holding directory
         if self._holding_dir:

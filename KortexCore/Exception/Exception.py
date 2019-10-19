@@ -79,3 +79,11 @@ class InvalidPath(KortexError):
     @abc.abstractmethod
     def message():
         return "Please insert a valid path for project root"
+
+
+class BadEventMove(KortexError):
+
+    @staticmethod
+    @abc.abstractmethod
+    def message():
+        return "Cannot move event to event nested in it"
