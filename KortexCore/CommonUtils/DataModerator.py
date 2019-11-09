@@ -25,5 +25,3 @@ class DataModerator(object):
 
     def get_file_path(self, group, name):
         return path.join(self._images, group, name)
-
-

@@ -8,40 +8,31 @@ class KortexCoreInterface(object):
     """
     Interface class for Kortex core (engine) operations.
     """
-    roots = {}
-    events = {}
 
-    def __init__(self, root_dir):
+    def __init__(self, prj):
         """
         Create interface instance as well as a new project
-        param: rootdir: The root directory of the project. If the direcory doesn't
         exist it will be created (str)
         """
 
         # Create main utils and initialize the project
         self._file_factory = FileFactory()
-        if root_dir in self.roots:
-            self._project = self.roots[root_dir]
-            self._all_events = self.events[self._project]
-        else:
-            self._project = self._file_factory.generate_directory(root_dir)
+        self._prj = prj
+        if self._prj.is_not_loaded():
+            self._prj.root = self._file_factory.generate_directory(prj.path)
 
             # Map and store all the event names
             all_dirs = []
-            self._project.get_all_directories(dir_list=all_dirs)
-            self._all_events = list(map(lambda _dir: _dir.name, all_dirs))
-
-            # Update the loaded projects and events tables
-            self.roots.update({root_dir: self._project})
-            self.events.update({self._project: self._all_events})
+            self._prj.root.get_all_directories(dir_list=all_dirs)
+            self._prj.events = list(map(lambda _dir: _dir.name, all_dirs))
 
     @property
     def all_events(self):
-        return self._all_events
+        return self._prj.events
 
     @property
     def root(self):
-        return self._project.get_event()
+        return self._prj.root.get_event()
 
     def create_event(self, event_name, holding_event=None):
         """
@@ -52,11 +43,11 @@ class KortexCoreInterface(object):
         """
 
         # Check if event name already exists
-        if event_name in self._all_events:
+        if event_name in self._prj.events:
             raise DoubleEventName
 
         # Assign holding event. Default is the root event
-        holding_event = holding_event or self._project.get_event()
+        holding_event = holding_event or self._prj.root.get_event()
 
         # Create directory (and the event) inside the holding event
         _dir = holding_event.get_directory()
@@ -64,7 +55,7 @@ class KortexCoreInterface(object):
 
         # Append the event name to all the event name list
         _dir.add_directory(created_dir)
-        self._all_events.append(created_dir.name)
+        self._prj.events.append(created_dir.name)
 
         # From the created directory return the created event
         return created_dir.get_event()
@@ -79,7 +70,7 @@ class KortexCoreInterface(object):
         directory = event.get_directory()
         dir_name = directory.name
         directory.remove()
-        self._all_events.remove(dir_name)
+        self._prj.events.remove(dir_name)
 
     def move_event(self, event, target_holding_event):
         """
@@ -102,7 +93,7 @@ class KortexCoreInterface(object):
         param: name: The name of the event to return (str)
         return: The found event (Event)
         """
-        event = self._project.find_directory(name=name, get_event=True)
+        event = self._prj.root.find_directory(name=name, get_event=True)
         if not event:
             raise FileNotFoundError
         return event
@@ -111,7 +102,7 @@ class KortexCoreInterface(object):
         """
         Debug procedure, print all project to command line
         """
-        print("Project : \n\n" + str(self._project))
+        print("Project : \n\n" + str(self._prj.root))
 
 
 class PropertyArgs(object):

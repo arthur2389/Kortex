@@ -1,3 +1,5 @@
+from os import path
+
 from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexCore.Exception.Exception import ProjectAlreadyExists
 from KortexCore.CommonUtils.Singleton import singleton
@@ -11,14 +13,12 @@ class Project(object):
             self.root = root
             self.events = events
 
-    def __init__(self, name, _path):
+    def __init__(self, name, _path, root=None, events=[]):
         self._name = name
         self._path = _path
         self._loaded_data = None
-
-    @property
-    def loaded_data(self):
-        return self._loaded_data
+        self._root = root
+        self._events = events
 
     @property
     def name(self):
@@ -28,11 +28,27 @@ class Project(object):
     def path(self):
         return self._path
 
-    def set_loaded_data(self, root, events):
-        self._loaded_data = self._LoadedData(root=root, events=events)
+    @property
+    def root(self):
+        return self._root
+
+    @property
+    def events(self):
+        return self._events
+
+    @root.setter
+    def root(self, root):
+        self._root = root
+
+    @events.setter
+    def events(self, events):
+        self._events = events
+
+    def is_not_loaded(self):
+        return not self._root
 
     def __repr__(self):
-        return "(" + self.name + " : " + self._path + ") "
+        return "(" + self.name + " : " + self.path + ") "
 
 
 @singleton
@@ -66,7 +82,7 @@ class ProjectManager(object):
     def set_new_project(self, name, pr_path):
         if name in self._projects:
             raise ProjectAlreadyExists
-        self._projects.update({name: Project(name=name, _path=pr_path)})
+        self._projects.update({name: Project(name=name, _path=path.join(pr_path, name))})
         self._data_moderator.write_data(group="projects_local",
                                         parameter="projects",
                                         new_data={pr.name: pr.path for pr in self._projects.values()})

@@ -51,7 +51,7 @@ class KortexMainWindow(QMainWindow):
 
     def _load_project(self):
         prj = self.prj_mgr.get_current_project()
-        self.kortex_project = KortexCoreInterface(root_dir=prj.path)
+        self.kortex_project = KortexCoreInterface(prj=prj)
         self.setWindowTitle("Kortex " + "Project : " + prj.name)
 
     def _build_main_menu(self):
