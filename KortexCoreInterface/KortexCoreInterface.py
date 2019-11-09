@@ -36,6 +36,10 @@ class KortexCoreInterface(object):
             self.events.update({self._project: self._all_events})
 
     @property
+    def all_events(self):
+        return self._all_events
+
+    @property
     def root(self):
         return self._project.get_event()
 
@@ -118,7 +122,8 @@ class PropertyArgs(object):
     def __init__(self, img_path=None,
                  description=None,
                  importance=None,
-                 cash_flow=None):
+                 cash_flow=None,
+                 completion_status=None):
         """
         param: imgPath: full path of image [".jpg", ".png", ".gif", ".svg"] file (str)
         param description: event description (str)
@@ -129,7 +134,7 @@ class PropertyArgs(object):
         self.description = description
         self.importance = importance
         self.cash_flow = cash_flow
-
+        self.completion_status = completion_status
 
 class DateTimeArgs(object):
 
