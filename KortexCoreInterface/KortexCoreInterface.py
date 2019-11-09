@@ -136,6 +136,7 @@ class PropertyArgs(object):
         self.cash_flow = cash_flow
         self.completion_status = completion_status
 
+
 class DateTimeArgs(object):
 
     def __init__(self, day, month, year, hour, minute):
