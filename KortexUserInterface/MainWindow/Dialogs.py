@@ -217,7 +217,7 @@ class LoadProjectWindow(KortexDialog):
         vlayout = QVBoxLayout()
 
         self._names = QComboBox()
-        self._names.addItems(self._data_moderator.projectnames)
+        self._names.addItems(self._prj_mrg.projectnames)
 
         vlayout.addWidget(self._names)
         self._get_dialog_buttons(vlayout)
@@ -268,6 +268,6 @@ class NewProjectWindow(KortexDialog):
             raise BadEventName
         if not self._is_valid_path(_path):
             raise InvalidPath
-        self._data_moderator.set_new_project(name=name,
-                                             pr_path=_path)
+        self._prj_mrg.set_new_project(name=name,
+                                      pr_path=_path)
         QDialog.accept(self)

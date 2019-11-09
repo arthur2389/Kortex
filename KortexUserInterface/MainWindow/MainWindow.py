@@ -5,6 +5,7 @@ from KortexCoreInterface.KortexCoreInterface import KortexCoreInterface
 from KortexCore.CommonUtils.DataModerator import DataModerator
 from KortexUserInterface.MainWindow.Dialogs import LoadProjectWindow, NewProjectWindow, NewEventWindow
 from KortexUserInterface.KortexWidgets.MainTree import MainTree
+from KortexCore.ProjectManager.ProjectManager import ProjectManager
 
 
 class KortexMainWindow(QMainWindow):
@@ -24,6 +25,7 @@ class KortexMainWindow(QMainWindow):
         super(KortexMainWindow, self).__init__()
 
         self._data_moderator = DataModerator()
+        self.prj_mgr = ProjectManager()
         self.window_sizes = \
             KortexMainWindow.WindowSizes(sizes=self._data_moderator.get_data(group="main_window_sizes"))
 
@@ -48,9 +50,9 @@ class KortexMainWindow(QMainWindow):
         self._layout.addWidget(self.tree)
 
     def _load_project(self):
-        prj_path, prj_name = self._data_moderator.get_current_project()
-        self.kortex_project = KortexCoreInterface(root_dir=prj_path)
-        self.setWindowTitle("Kortex " + "Project : " + prj_name)
+        prj = self.prj_mgr.get_current_project()
+        self.kortex_project = KortexCoreInterface(root_dir=prj.path)
+        self.setWindowTitle("Kortex " + "Project : " + prj.name)
 
     def _build_main_menu(self):
         bar = self.menuBar()
@@ -101,7 +103,7 @@ class KortexMainWindow(QMainWindow):
     def _load(self):
         load_ui = LoadProjectWindow(self)
         if load_ui.exec_():
-            self._data_moderator.set_current_project(load_ui.project_to_load)
+            self.prj_mgr.set_current_project(load_ui.project_to_load)
             self._load_project()
             self.tree.fill(self.kortex_project)
 

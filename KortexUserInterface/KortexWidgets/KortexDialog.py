@@ -6,6 +6,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from KortexCore.CommonUtils.DataModerator import DataModerator
+from KortexCore.ProjectManager.ProjectManager import ProjectManager
 from KortexUserInterface.ExceptionHandler import get_handler
 from KortexCore.Exception.Exception import EmptyField
 
@@ -16,6 +17,7 @@ class KortexDialog(QDialog):
         super(KortexDialog, self).__init__(parent=parent)
         self._label_width = label_width
         self._data_moderator = DataModerator()
+        self._prj_mrg = ProjectManager()
         self.excs_handler = get_handler()
         self.setWindowIcon(QIcon(self._data_moderator.get_file_path(group="main_tree", name="kortex_tree")))
 

@@ -3,7 +3,7 @@ import root
 
 from KortexCore.CommonUtils.JsonIO import JsonIO
 from KortexCore.CommonUtils.Singleton import singleton
-from KortexCore.Exception.Exception import ProjectAlreadyExists
+
 
 @singleton
 class DataModerator(object):
@@ -12,7 +12,6 @@ class DataModerator(object):
         self._main_path = root.get_root()
         self._data_files = path.join(self._main_path, "Metadata//DataFiles")
         self._images = path.join(self._main_path, "Metadata//Images")
-        self.projects = JsonIO.read(path.join(self._data_files, "projects"))
 
     def get_data(self, group, parameter=None):
         file_data = JsonIO.read(path.join(self._data_files, group))
@@ -20,28 +19,11 @@ class DataModerator(object):
             return file_data
         return file_data[parameter]
 
+    def write_data(self, group, parameter, new_data):
+        full_path = path.join(self._data_files, group)
+        JsonIO.write(full_path, parameter, new_data)
+
     def get_file_path(self, group, name):
         return path.join(self._images, group, name)
 
-    def get_current_project(self):
-        name = self.projects["current_project"]
-        return self.projects["projects"][name], name
 
-    def set_current_project(self, name):
-        self.projects["current_project"] = name
-        JsonIO.write(path.join(self._data_files, "projects"),
-                     "current_project",
-                     name)
-
-    def set_new_project(self, name, pr_path):
-        if name in self.projects["projects"]:
-            raise ProjectAlreadyExists
-        self.projects["projects"].update({name: path.join(pr_path, name)})
-        JsonIO.write(path.join(self._data_files, "projects"),
-                     "projects",
-                     self.projects["projects"])
-        self.set_current_project(name)
-
-    @property
-    def projectnames(self):
-        return self.projects["projects"].keys()
